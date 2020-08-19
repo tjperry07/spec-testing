@@ -13,6 +13,8 @@ paths:
       responses: {}
       operationId: get-messages
       description: The messages endpoint
+      security:
+        - ACCESS_TOKEN: []
 components:
   schemas:
     Messages:
