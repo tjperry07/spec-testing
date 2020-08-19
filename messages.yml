@@ -89,6 +89,13 @@ paths:
       description: The messages endpoint
       security:
         - ACCESS_TOKEN: []
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: limit
+          description: 'The number of objects to return. Defaults to 100. If set too high, requests may fail to prevent excessively large response bodies.'
 components:
   schemas:
     Messages:
