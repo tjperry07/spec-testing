@@ -161,3 +161,62 @@ components:
       scheme: basic
 tags:
   - name: messages
+    description: |-
+      Responses from the `/messages` endpoint are encoded as UTF-8 JSON objects with the following attributes:
+
+      | Attribute  | Type | Description  |
+      |----:|---|:----|
+      | `id` | string | A globally unique object identifier. |
+      | `object` | string | A string describing the type of object (value is "message").
+      | `account_id` | string | Reference to a parent account object. |
+      | `thread_id` | string | Reference to a parent thread object (all messages have a thread). |
+      | `subject` | string | The subject line of the message. |
+      | `from` | array | A list of name+email pairs the message was sent from. This is usually one object, but can be many. |
+      | `to` | array | An array of name+email pairs the message was sent to. |
+      | `cc` | array | An array of name+email pairs the message was cc'd to. |
+      | `bcc` | array | An array of name+email pairs the message was bcc'd to. For received mail this is nearly always empty (for obvious reasons). |
+      | `reply_to` | array | An array of name+email pairs replies should be sent to. |
+      | `date` | unix timestamp | A timestamp of the date the message was received by the mail server. **Note:** This may be different from the unverified `Date` header in raw message object.
+      | `unread` | boolean | Indicates the message is unread. This is the default for new incoming mail (mutable). |
+      | `starred`  | boolean | Indicates the message is in a starred or flagged state (mutable). |
+      | `snippet`  | string | A shortened plain-text preview of the message body.
+      | `body` |  string | The full HTML message body. Messages with only plain-text representations are up-converted to HTML.
+      | `files`  | array | An array of [File](ref:files) objects, if the message includes attachments.
+      | `events`  | array | An array [Event](ref:events) objects, if message includes calendar invites.
+      | `folder` | folder object | A single folder object indicating the location of the message. This is present only if the parent account's `organization_unit` is `folder`. This property can be changed to move the message to a different folder.
+      | `labels` | array | A list of [Label](ref:labels) objects. This is present only if the parent account's `organization_unit` is `label`. These have Gmail-style semantics and can be arbitrarily added and removed from messages. |
+
+      ## Supported Modifications
+
+      Like [Threads](ref:threads), you can make many modifications to the state of messages. You can:
+
+      1. Modify the unread status.
+      2. Star or unstar the message.
+      3. Move the message to a different folder.
+      4. Modify the message's labels.
+
+      To make these modifications, make a HTTP PUT request to `/messages/{id}` with any combination of the body parameters [specified here](ref:messagesid-1).
+
+      The Nylas APIs expose a parsed and sanitized version of the original [RFC-2822](https://www.ietf.org/rfc/rfc2822.txt) email object, combined with the state from the mail server, such as unread status and folder location. This results in a simple and universal object type, that makes building applications a breeze.
+
+      We still provide access to the [RFC-2822 raw message](ref:raw-message-contents) object, if needed.
+
+      ## Filtering, Pagination, and Views with Messages
+
+      The messages endpoint supports [Filters](ref:filters), [Pagination](ref:pagination), and [Views](ref:views), making it easy to return a subset of messages in a specific folder, from a certain address, with a specific subject, etc.
+
+      ### Message Filtering
+
+      Messages support various combinations of [Filters](ref:filters). Check all the query parameters on the [/messages](ref:messages-1) endpoint for more information.
+
+      ### Message Pagination
+
+      By default the `/messages` endpoint will return a maximum of 100 objects. You should paginate through an entire user's mailbox by using the `limit` and `offset` URL query parameters. See [Pagination](ref:pagination) for more details about pagination. Check all the query parameters on the [/messages](ref:messages-1) endpoint for more information.
+
+      ### Message Views
+
+      Messages support the use of [Views](ref:views) by including the `view` query parameter in your request.
+
+      The expanded message view exposes several additional RFC2822 headers, useful for implementing custom threading or cross-mailbox identification. Pass the `view=expanded` query parameter when making requests to `/messages` and `/messages/{id}`.
+
+      The following block is an example of what is added to the message object when using the expanded view.
