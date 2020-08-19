@@ -1,24 +1,34 @@
 openapi: 3.0.0
 info:
-  title: API-Template
+  title: Miro Docs Test
   version: '1.0'
   description: |-
     Nylas Test Template. Messages and account only
 
     # This is a heading
+    some text
+
     ## Level Two
+    some text
+
     ### Level Three
+    some text
 
     # Second heading
+    some text
+
     ## Level Two
+    some text
+
     ### Level Three
 servers:
   - url: 'https://api.nylas.com'
 paths:
   /messages:
     get:
-      summary: Your GET endpoint
-      tags: []
+      summary: Get Messages
+      tags:
+        - messages
       responses:
         '200':
           description: OK
@@ -26,6 +36,55 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Messages'
+              examples:
+                example-1:
+                  value:
+                    - account_id: 43jf****
+                      bcc: []
+                      body: |-
+                        <html>
+                        <head>
+                         <meta charset="UTF-8">
+                         <style type="text/css">
+                         html {
+                         -webkit-text-size-adjust:none;
+                         }
+                         body {
+                         width:100%;
+                         margin:0 auto;
+                         padding:0;
+                        }
+                          p {
+                         width:280px;
+                         line-height: 16px;
+                         letter-spacing: 0.5px;
+                         }
+                         </style>
+                         <title>Welcome  ...  </html>
+                      cc: []
+                      date: 1557950729
+                      events: []
+                      files: []
+                      folder:
+                        display_name: Inbox
+                        id: 7hcg****
+                        name: inbox
+                      from:
+                        - email: no-reply@cc.yahoo-inc.com
+                          name: Yahoo
+                      id: 7a8939****
+                      object: message
+                      reply_to:
+                        - email: no-reply@cc.yahoo-inc.com
+                          name: Yahoo
+                      snippet: 'Hi James, james****@yahoo.com. Welcome.'
+                      starred: false
+                      subject: Welcome
+                      thread_id: cvsp****
+                      to:
+                        - email: james****@yahoo.com
+                          name: ''
+                      unread: true
       operationId: get-messages
       description: The messages endpoint
       security:
@@ -35,9 +94,6 @@ components:
     Messages:
       title: Messages
       type: object
-      properties:
-        id:
-          type: string
       x-examples:
         example-1:
           - account_id: 43jf****
@@ -86,7 +142,22 @@ components:
               - email: james****@yahoo.com
                 name: ''
             unread: true
+      properties:
+        id:
+          type: string
+          description: 'A globally unique object identifier. '
+        object:
+          type: string
+          description: A string describing the type of object (value is "message")
+        account_id:
+          type: string
+          description: Reference to a parent account object.
   securitySchemes:
     ACCESS_TOKEN:
       type: http
       scheme: bearer
+    ENCODED_AUTH:
+      type: http
+      scheme: basic
+tags:
+  - name: messages
