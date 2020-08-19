@@ -89,6 +89,12 @@ paths:
       description: The messages endpoint
       security:
         - ACCESS_TOKEN: []
+      parameters:
+        - schema:
+            type: number
+          in: query
+          name: limit
+          description: Some description here
 components:
   schemas:
     Messages:
