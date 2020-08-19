@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Nylas API documentation
-  version: '2.1'
+  version: '1.0'
   description: |-
     Nylas Test Template. Messages and account only
 
@@ -165,6 +165,7 @@ tags:
       Messages are the fundamental object of the Nylas platform, and the core building block for most email applications. They contain several pieces of information, such as when a message was sent, the sender's address, to whom it was sent, and the message body. They can also contain files (attachments), calendar event invitations, and more.
 
       <div style="background-color: #F0F0F0;padding: 12px 0px 12px 12px;border-left: 5px solid #F90258;">Although message bodies are represented in HTML, they are generally not safe to directly inject into a web app. This could result in global styles being applied to your app, or the execution of arbitrary JavaScript.</div>
+
       # The Message Object
 
       Responses from the `/messages` endpoint are encoded as UTF-8 JSON objects with the following attributes:
