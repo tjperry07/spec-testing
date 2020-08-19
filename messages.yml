@@ -2,7 +2,16 @@ openapi: 3.0.0
 info:
   title: API-Template
   version: '1.0'
-  description: Nylas Test Template. Messages and account only
+  description: |-
+    Nylas Test Template. Messages and account only
+
+    # This is a heading
+    ## Level Two
+    ### Level Three
+
+    # Second heading
+    ## Level Two
+    ### Level Three
 servers:
   - url: 'https://api.nylas.com'
 paths:
@@ -10,7 +19,13 @@ paths:
     get:
       summary: Your GET endpoint
       tags: []
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Messages'
       operationId: get-messages
       description: The messages endpoint
       security:
