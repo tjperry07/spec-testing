@@ -48,7 +48,7 @@ paths:
           in: query
           name: limit
           description: 'The number of objects to return. Defaults to 100. If set too high, requests may fail to prevent excessively large response bodies.'
-      x-codeSamples:
+      x-code-samples:
         - lang: Node + Request
           source: |
             const request = require('request');
