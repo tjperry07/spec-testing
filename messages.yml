@@ -1,26 +1,104 @@
 openapi: 3.0.0
 info:
-  title: Nylas API documentation
-  version: '1.0'
+  title: The Nylas APIs
+  version: '2.1'
   description: |-
-    Nylas Test Template. Messages and account only
+    The Nylas Platform provides a modern API that works with existing email providers. Nylas makes it simple and fast to integrate your app with a user's email, contacts, or calendar data, and eliminates the complexity of working with old protocols like IMAP and MIME.
 
-    # This is a heading
-    some text
+    The API is designed around the REST ideology, providing simple and predictable URIs to access and modify objects. Requests support standard HTTP methods like GET, PUT, POST, and DELETE and standard status codes. Response bodies are always UTF-8 encoded JSON objects, unless explicitly documented otherwise.
 
-    ## Level Two
-    some text
+    # Authentication
 
-    ### Level Three
-    some text
+    Before you can start to use the Nylas APIs, you need:
 
-    # Second heading
-    some text
+    * Access Token with the scopes set
+    * Client ID and Client Secret
 
-    ## Level Two
-    some text
+    There are two methods of getting you access token and client ID. 
 
-    ### Level Three
+    * Connect an [individual account](#link). This is good for testing and development.
+    * Connect a [service account](#). This is good if you manage an organization's email account. 
+
+    # Views
+
+    Instead of returning all data about an object, the following views allow you to customize the response for any endpoint. They can be combined with [Filters](ref:filters). The following endpoints support view parameters: [Threads](ref:threads), [Messages](ref:messages), [Drafts](ref:drafts), [Folders](ref:folders), [Labels](ref:labels), [Files](ref:files), [Calendars](ref:calendars), [Events](ref:events), and [Contacts](ref:contacts).
+
+    ## The ID View
+
+    Return only the IDs of objects.
+
+    Supported by [Threads](ref:threads), [Messages](ref:messages), [Drafts](ref:drafts), [Folders](ref:folders), [Labels](ref:labels), [Files](ref:files), [Calendars](ref:calendars), [Events](ref:events), and [Contacts](ref:contacts).
+
+    **Example Request**
+
+    ```
+    curl https://api.nylas.com/messages?thread_id=aqb0llc2ioo0bclh7uxkim9z6&view=ids
+    ```
+
+    **Example Response**
+
+    ```
+    [
+      "f594seo6izjks2s7qxjbwquol",
+      "3a95fq0askqgj7mnh6i281ahz",
+      "4vfg8p1om177q2cfx9sselkea"
+    ]
+    ```
+
+    ## The Count View
+
+    Returns the number of objects in the collection being queried.
+
+    Supported by [Threads](ref:threads), [Messages](ref:messages), [Drafts](ref:drafts), [Folders](ref:folders), [Labels](ref:labels), [Files](ref:files), [Calendars](ref:calendars), [Events](ref:events), and [Contacts](ref:contacts).
+
+    **Example Request**
+
+    ```
+    curl https://api.nylas.com/threads?in=inbox&view=count
+    ```
+
+    **Example Response**
+
+    ```
+    {
+      "count": 386
+    }
+    ```
+
+    ## The Expanded View
+
+    Expands the `threads` responses to contain message/draft sub-objects. Adding `view=expanded` will remove `message_ids` and `draft_ids`, and include `messages` and `drafts`. **Note:** The message and draft sub-objects do not include a`body` parameter.
+
+    Message objects are expanded to include several additional RFC2822 headers. For more information, see the [Expanded Message View](ref:messages).
+
+    Supported by [Threads](ref:threads), [Messages](ref:messages), and [Deltas](ref:deltas).
+
+
+    # Filters
+
+    Filters allow you to narrow a request based on specific parameters. In general, the more specific you can make the requests, the faster they perform. For this reason it is important to use filters whenever possible.
+
+    Filters may be appended to API requests on [Messages](ref:messages), [Threads](ref:threads), [Files](ref:files), and [Events](ref:events). There is also limited filter support for [Contacts](ref:contacts) and [Deltas](ref:deltas). 
+
+    > Values must use [percent-encoding](http://en.wikipedia.org/wiki/Percent-encoding) (also known as URL encoding). See the specific endpoint documentation for details on exact syntax and supported parameters.
+
+    Filters do not currently support wildcards, such as `from=*@expedia.com`. Providing multiple values for a single filter is also unsupported. If you require more generalized parameter matching, see the [Search](ref:search) APIs.
+
+    # Pagination
+    Even though a user's mailbox usually has thousands of items, most Nylas API endpoints return a maximally fixed number of objects for performance reasons.
+
+    Your application can increase performance by including a `limit` parameter to request fewer objects. Using both the `limit` and `offset` parameters allows you to easily paginate through a large number of objects.
+
+    > If a request returns fewer objects than the `limit` parameter, there are no more items available to return.
+
+    | Query Parameter | Type | Description |
+    | ----------|--|------- |
+    | `limit` | integer  | The number of objects to return. This value often defaults to 100. If set too high, requests may fail to prevent excessively large response bodies. |
+    | `offset` | integer  | A zero-based offset from the default object sorting. |
+
+    If you are building an application intended to maintain a cache of the user's data, such as a full-featured mail client, we recommend using the [Webhooks](ref:webhooks) or [Deltas](ref:deltas) endpoints to avoid repeatedly paginating over all objects.
+
+    # Rate Limiting
 servers:
   - url: 'https://api.nylas.com'
 paths:
@@ -96,59 +174,59 @@ paths:
           in: query
           name: limit
           description: 'The number of objects to return. Defaults to 100. If set too high, requests may fail to prevent excessively large response bodies.'
+  '/messages/{id}':
+    get:
+      summary: Get a Message
+      tags:
+        - messages
+      responses: {}
+      operationId: get-messages-id
+      description: ''
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: integer
+        name: id
+        in: path
+        description: The message ID.
+        required: true
+    put:
+      summary: Update a message
+      tags:
+        - messages
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./reference/snippet-test.v1.yaml#/components/schemas/Messages
+        '400':
+          description: Bad Request
+      operationId: put-messages-id
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Special-Header-Name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Messages'
+      security:
+        - ACCESS_TOKEN: []
+      description: Some description here
 components:
   schemas:
     Messages:
       title: Messages
       type: object
-      x-examples:
-        example-1:
-          - account_id: 43jf****
-            bcc: []
-            body: |-
-              <html>
-              <head>
-               <meta charset="UTF-8">
-               <style type="text/css">
-               html {
-               -webkit-text-size-adjust:none;
-               }
-               body {
-               width:100%;
-               margin:0 auto;
-               padding:0;
-              }
-                p {
-               width:280px;
-               line-height: 16px;
-               letter-spacing: 0.5px;
-               }
-               </style>
-               <title>Welcome  ...  </html>
-            cc: []
-            date: 1557950729
-            events: []
-            files: []
-            folder:
-              display_name: Inbox
-              id: 7hcg****
-              name: inbox
-            from:
-              - email: no-reply@cc.yahoo-inc.com
-                name: Yahoo
-            id: 7a8939****
-            object: message
-            reply_to:
-              - email: no-reply@cc.yahoo-inc.com
-                name: Yahoo
-            snippet: 'Hi James, james****@yahoo.com. Welcome.'
-            starred: false
-            subject: Welcome
-            thread_id: cvsp****
-            to:
-              - email: james****@yahoo.com
-                name: ''
-            unread: true
+      x-examples: {}
       properties:
         id:
           type: string
@@ -172,9 +250,9 @@ tags:
       Messages are the fundamental object of the Nylas platform, and the core building block for most email applications. They contain several pieces of information, such as when a message was sent, the sender's address, to whom it was sent, and the message body. They can also contain files (attachments), calendar event invitations, and more.
 
       <div style="background-color: #F0F0F0;padding: 12px 0px 12px 12px;border-left: 5px solid #F90258;">Although message bodies are represented in HTML, they are generally not safe to directly inject into a web app. This could result in global styles being applied to your app, or the execution of arbitrary JavaScript.</div>
-      
+
       <br>
-     
+
       # The Message Object
 
       Responses from the `/messages` endpoint are encoded as UTF-8 JSON objects with the following attributes:
