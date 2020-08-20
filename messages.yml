@@ -246,6 +246,7 @@ components:
       scheme: basic
 tags:
   - name: messages
+    x-tag-expanded: false
     description: |-
       Messages are the fundamental object of the Nylas platform, and the core building block for most email applications. They contain several pieces of information, such as when a message was sent, the sender's address, to whom it was sent, and the message body. They can also contain files (attachments), calendar event invitations, and more.
 
