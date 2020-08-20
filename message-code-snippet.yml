@@ -36,55 +36,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Messages'
-              examples:
-                example-1:
-                  value:
-                    - account_id: 43jf****
-                      bcc: []
-                      body: |-
-                        <html>
-                        <head>
-                         <meta charset="UTF-8">
-                         <style type="text/css">
-                         html {
-                         -webkit-text-size-adjust:none;
-                         }
-                         body {
-                         width:100%;
-                         margin:0 auto;
-                         padding:0;
-                        }
-                          p {
-                         width:280px;
-                         line-height: 16px;
-                         letter-spacing: 0.5px;
-                         }
-                         </style>
-                         <title>Welcome  ...  </html>
-                      cc: []
-                      date: 1557950729
-                      events: []
-                      files: []
-                      folder:
-                        display_name: Inbox
-                        id: 7hcg****
-                        name: inbox
-                      from:
-                        - email: no-reply@cc.yahoo-inc.com
-                          name: Yahoo
-                      id: 7a8939****
-                      object: message
-                      reply_to:
-                        - email: no-reply@cc.yahoo-inc.com
-                          name: Yahoo
-                      snippet: 'Hi James, james****@yahoo.com. Welcome.'
-                      starred: false
-                      subject: Welcome
-                      thread_id: cvsp****
-                      to:
-                        - email: james****@yahoo.com
-                          name: ''
-                      unread: true
+              examples: {}
       operationId: get-messages
       description: The messages endpoint
       security:
