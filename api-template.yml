@@ -742,9 +742,6 @@ components:
     ACCESS_TOKEN:
       type: http
       scheme: bearer
-  headers:
-    Content-Type:
-      in: header
 tags:
   - name: Folders
     description: |-
