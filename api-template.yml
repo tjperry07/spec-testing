@@ -20,7 +20,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Folder-Object'
               examples:
-                example-1:
+                endpoint:
                   value:
                     - id: 4zv7p****
                       object: folder
@@ -146,36 +146,34 @@ components:
   schemas:
     Folder-Object:
       title: Folder-Object
-      type: object
+      type: array
       x-tags:
         - Folders
-      properties:
-        id:
-          type: string
-          description: Globally unique object identifier.
-        object:
-          type: string
-          description: A string describing the type of object (value is "folder").
-        account_id:
-          type: string
-          description: Reference to parent account object.
-        name:
-          type: string
-          description: |-
-            Standard categories type, based on [RFC-6154](http://tools.ietf.org/html/rfc6154).
-            Can be one of the following:
-            * inbox
-            * all
-            * trash
-            * archive
-            * drafts
-            * sent
-            * spam
-            * important
-            * null (regular user-created folder)
-        display_name:
-          type: string
-          description: 'Localized name of folder, matching what is presented in their other mail apps. If you are displaying folders, use this instead of `name`.'
+      x-examples:
+        Model:
+          - id: 4zv7p****
+            object: folder
+            name: inbox
+            display_name: INBOX
+            account_id: awa6lt****
+          - id: 76zrf****
+            name: archive
+            display_name: 2015 Archive
+            account_id: awa6lto****
+            object: folder
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          object:
+            type: string
+          account_id:
+            type: string
+          name:
+            type: string
+          display_name:
+            type: string
     Folder-Create:
       title: Folder-Create
       type: object
