@@ -1,320 +1,912 @@
 openapi: 3.0.0
 info:
-  title: The Nylas APIs
   version: '2.1'
-  description: |-
-    The Nylas Platform provides a modern API that works with existing email providers. Nylas makes it simple and fast to integrate your app with a user's email, contacts, or calendar data, and eliminates the complexity of working with old protocols like IMAP and MIME.
-
-    The API is designed around the REST ideology, providing simple and predictable URIs to access and modify objects. Requests support standard HTTP methods like GET, PUT, POST, and DELETE and standard status codes. Response bodies are always UTF-8 encoded JSON objects, unless explicitly documented otherwise.
-
-    # Authentication
-
-    Before you can start to use the Nylas APIs, you need:
-
-    * Access Token with the scopes set
-    * Client ID and Client Secret
-
-    There are two methods of getting you access token and client ID. 
-
-    * Connect an [individual account](#link). This is good for testing and development.
-    * Connect a [service account](#). This is good if you manage an organization's email account. 
-
-    # Views
-
-    Instead of returning all data about an object, the following views allow you to customize the response for any endpoint. They can be combined with [Filters](ref:filters). The following endpoints support view parameters: [Threads](ref:threads), [Messages](ref:messages), [Drafts](ref:drafts), [Folders](ref:folders), [Labels](ref:labels), [Files](ref:files), [Calendars](ref:calendars), [Events](ref:events), and [Contacts](ref:contacts).
-
-    ## The ID View
-
-    Return only the IDs of objects.
-
-    Supported by [Threads](ref:threads), [Messages](ref:messages), [Drafts](ref:drafts), [Folders](ref:folders), [Labels](ref:labels), [Files](ref:files), [Calendars](ref:calendars), [Events](ref:events), and [Contacts](ref:contacts).
-
-    **Example Request**
-
-    ```
-    curl https://api.nylas.com/messages?thread_id=aqb0llc2ioo0bclh7uxkim9z6&view=ids
-    ```
-
-    **Example Response**
-
-    ```
-    [
-      "f594seo6izjks2s7qxjbwquol",
-      "3a95fq0askqgj7mnh6i281ahz",
-      "4vfg8p1om177q2cfx9sselkea"
-    ]
-    ```
-
-    ## The Count View
-
-    Returns the number of objects in the collection being queried.
-
-    Supported by [Threads](ref:threads), [Messages](ref:messages), [Drafts](ref:drafts), [Folders](ref:folders), [Labels](ref:labels), [Files](ref:files), [Calendars](ref:calendars), [Events](ref:events), and [Contacts](ref:contacts).
-
-    **Example Request**
-
-    ```
-    curl https://api.nylas.com/threads?in=inbox&view=count
-    ```
-
-    **Example Response**
-
-    ```
-    {
-      "count": 386
-    }
-    ```
-
-    ## The Expanded View
-
-    Expands the `threads` responses to contain message/draft sub-objects. Adding `view=expanded` will remove `message_ids` and `draft_ids`, and include `messages` and `drafts`. **Note:** The message and draft sub-objects do not include a`body` parameter.
-
-    Message objects are expanded to include several additional RFC2822 headers. For more information, see the [Expanded Message View](ref:messages).
-
-    Supported by [Threads](ref:threads), [Messages](ref:messages), and [Deltas](ref:deltas).
-
-
-    # Filters
-
-    Filters allow you to narrow a request based on specific parameters. In general, the more specific you can make the requests, the faster they perform. For this reason it is important to use filters whenever possible.
-
-    Filters may be appended to API requests on [Messages](ref:messages), [Threads](ref:threads), [Files](ref:files), and [Events](ref:events). There is also limited filter support for [Contacts](ref:contacts) and [Deltas](ref:deltas). 
-
-    > Values must use [percent-encoding](http://en.wikipedia.org/wiki/Percent-encoding) (also known as URL encoding). See the specific endpoint documentation for details on exact syntax and supported parameters.
-
-    Filters do not currently support wildcards, such as `from=*@expedia.com`. Providing multiple values for a single filter is also unsupported. If you require more generalized parameter matching, see the [Search](ref:search) APIs.
-
-    # Pagination
-    Even though a user's mailbox usually has thousands of items, most Nylas API endpoints return a maximally fixed number of objects for performance reasons.
-
-    Your application can increase performance by including a `limit` parameter to request fewer objects. Using both the `limit` and `offset` parameters allows you to easily paginate through a large number of objects.
-
-    > If a request returns fewer objects than the `limit` parameter, there are no more items available to return.
-
-    | Query Parameter | Type | Description |
-    | ----------|--|------- |
-    | `limit` | integer  | The number of objects to return. This value often defaults to 100. If set too high, requests may fail to prevent excessively large response bodies. |
-    | `offset` | integer  | A zero-based offset from the default object sorting. |
-
-    If you are building an application intended to maintain a cache of the user's data, such as a full-featured mail client, we recommend using the [Webhooks](ref:webhooks) or [Deltas](ref:deltas) endpoints to avoid repeatedly paginating over all objects.
-
-    # Rate Limiting
+  title: Nylas API Template
+  license: {}
+  description: This demonstrates how to document Nylas REST APIs.
 servers:
   - url: 'https://api.nylas.com'
 paths:
-  /messages:
+  /folders:
     get:
-      summary: Get Messages
+      summary: Return all folders
       tags:
-        - messages
+        - Folders
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Messages'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example:
+                  value:
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Archive
+                      id: ajs4ef7xu74vns6o5ufsu69m7
+                      name: archive
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Conversation History
+                      id: etmvbqwqo64vlm73qvyfj2tet
+                      name: null
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Deleted Items
+                      id: blrfzbz4r066ip8x1bh8k8g1y
+                      name: trash
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Drafts
+                      id: a6vnuwv9gjj1xidxkhyzxeke1
+                      name: drafts
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Inbox
+                      id: b8un1ec0syrv94153fg3p61ci
+                      name: inbox
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Junk Email
+                      id: 8tqebvw8t0aky7f2or1oagwt8
+                      name: spam
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Sent Items
+                      id: clzqp0nsim0138aohwzha34vk
+                      name: sent
+                      object: folder
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
               examples:
                 example-1:
                   value:
-                    - account_id: 43jf****
-                      bcc: []
-                      body: |-
-                        <html>
-                        <head>
-                         <meta charset="UTF-8">
-                         <style type="text/css">
-                         html {
-                         -webkit-text-size-adjust:none;
-                         }
-                         body {
-                         width:100%;
-                         margin:0 auto;
-                         padding:0;
-                        }
-                          p {
-                         width:280px;
-                         line-height: 16px;
-                         letter-spacing: 0.5px;
-                         }
-                         </style>
-                         <title>Welcome  ...  </html>
-                      cc: []
-                      date: 1557950729
-                      events: []
-                      files: []
-                      folder:
-                        display_name: Inbox
-                        id: 7hcg****
-                        name: inbox
-                      from:
-                        - email: no-reply@cc.yahoo-inc.com
-                          name: Yahoo
-                      id: 7a8939****
-                      object: message
-                      reply_to:
-                        - email: no-reply@cc.yahoo-inc.com
-                          name: Yahoo
-                      snippet: 'Hi James, james****@yahoo.com. Welcome.'
-                      starred: false
-                      subject: Welcome
-                      thread_id: cvsp****
-                      to:
-                        - email: james****@yahoo.com
-                          name: ''
-                      unread: true
-      operationId: get-messages
-      description: The messages endpoint
+                    message: Error Message
+                    type: Error Type
+      operationId: get-folders
+      description: Returns all folders.
       security:
         - ACCESS_TOKEN: []
       parameters:
         - schema:
-            type: integer
-            format: int32
+            type: string
           in: query
-          name: limit
-          description: 'The number of objects to return. Defaults to 100. If set too high, requests may fail to prevent excessively large response bodies.'
-  '/messages/{id}':
-    get:
-      summary: Get a Message
+          name: in
+          description: 'Use the `in` filter with`folder_id`, `name`, `display_name`.'
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            # Return all folders found in the user's inbox
+            curl -X GET 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+
+            # Use offset, and limit to paginate the results
+            curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
+            -H 'Authorization: Bearer ACCESS_TOKEN
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Return all folders found in the user's inbox
+            nylas.folders.all()
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.where(limit=2, offset=4)
+
+            # Return the first folder
+            folder = nylas.folders.first()
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id'
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Return all folders found in the user's inbox
+            nylas.folders
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.limit(2).offset(4)
+
+            # Return the last folder
+            nylas.folders.last
+
+            # Return the first folder
+            folder = nylas.folders.first
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: 'Node.js SDK'
+          source: |-
+            // Return all folders found in the user's inbox
+            nylas.folders.list().then(folders => console.log(folders));
+
+            // Use offset, and limit to paginate the results
+            nylas.folders.list({limit: 2, offset: 4}).then(folders => console.log(folders))
+
+            // Return the first folder
+            nylas.folders.first().then(folder => console.log(folder));
+
+            // The following attributes are available for the folder object
+            folder.id
+            folder.object
+            folder.accountId
+            folder.name
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.FolderQuery;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFoldersExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Return all folders found in the user's inbox 
+                    folders.list();
+                    
+                    // Use offset, and limit to control pagination
+                    folders.list(new FolderQuery().limit(2).offset(4));
+                    
+                    // Return the first folder
+                    Folder folder = folders.list(new FolderQuery().limit(1)).get(0);
+                    
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getObject();
+                    folder.getId();
+                    folder.getAccountId();
+                    }
+            }    
+    post:
+      summary: Create a folder
       tags:
-        - messages
-      responses: {}
-      operationId: get-messages-id
-      description: ''
+        - Folders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    account_id: 79xcak1h10r1tmm5ogavx28lb
+                    display_name: Archive
+                    id: ajs4ef7xu74vns6o5ufsu69m7
+                    name: archive
+                    object: folder
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
+      operationId: post-folders
+      description: Creates a new folder.
+      security:
+        - ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Folder-Create'
+            examples:
+              example-1:
+                value:
+                  display_name: My Renamed Folder
+      parameters: []
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            # Return all folders found in the user's inbox
+            curl -X GET 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+
+            # Use offset, and limit to paginate the results
+            curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
+            -H 'Authorization: Bearer ACCESS_TOKEN
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Return all folders found in the user's inbox
+            nylas.folders.all()
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.where(limit=2, offset=4)
+
+            # Return the first folder
+            folder = nylas.folders.first()
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id'
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Return all folders found in the user's inbox
+            nylas.folders
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.limit(2).offset(4)
+
+            # Return the last folder
+            nylas.folders.last
+
+            # Return the first folder
+            folder = nylas.folders.first
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: 'Node.js SDK'
+          source: |-
+            // Return all folders found in the user's inbox
+            nylas.folders.list().then(folders => console.log(folders));
+
+            // Use offset, and limit to paginate the results
+            nylas.folders.list({limit: 2, offset: 4}).then(folders => console.log(folders))
+
+            // Return the first folder
+            nylas.folders.first().then(folder => console.log(folder));
+
+            // The following attributes are available for the folder object
+            folder.id
+            folder.object
+            folder.accountId
+            folder.name
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.FolderQuery;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFoldersExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Return all folders found in the user's inbox 
+                    folders.list();
+                    
+                    // Use offset, and limit to control pagination
+                    folders.list(new FolderQuery().limit(2).offset(4));
+                    
+                    // Return the first folder
+                    Folder folder = folders.list(new FolderQuery().limit(1)).get(0);
+                    
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getObject();
+                    folder.getId();
+                    folder.getAccountId();
+                    }
+            }   
+  '/folders/{id}':
     parameters:
       - schema:
           type: string
         name: id
         in: path
         required: true
-      - schema:
-          type: integer
-        name: id
-        in: path
-        description: The message ID.
-        required: true
-    put:
-      summary: Update a message
+        description: The ID of the folder.
+    get:
+      summary: Return a folder
       tags:
-        - messages
+        - Folders
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: ./reference/snippet-test.v1.yaml#/components/schemas/Messages
+                $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    account_id: 79xcak1h10r1tmm5ogavx28lb
+                    display_name: Archive
+                    id: ajs4ef7xu74vns6o5ufsu69m7
+                    name: archive
+                    object: folder
         '400':
           description: Bad Request
-      operationId: put-messages-id
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: Special-Header-Name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+      operationId: get-folders-id
+      description: Returns a folder by ID.
+      security:
+        - ACCESS_TOKEN: []
+      parameters: []
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            # Return all folders found in the user's inbox
+            curl -X GET 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+
+            # Use offset, and limit to paginate the results
+            curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
+            -H 'Authorization: Bearer ACCESS_TOKEN
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Return all folders found in the user's inbox
+            nylas.folders.all()
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.where(limit=2, offset=4)
+
+            # Return the first folder
+            folder = nylas.folders.first()
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id'
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Return all folders found in the user's inbox
+            nylas.folders
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.limit(2).offset(4)
+
+            # Return the last folder
+            nylas.folders.last
+
+            # Return the first folder
+            folder = nylas.folders.first
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: 'Node.js SDK'
+          source: |-
+            // Return all folders found in the user's inbox
+            nylas.folders.list().then(folders => console.log(folders));
+
+            // Use offset, and limit to paginate the results
+            nylas.folders.list({limit: 2, offset: 4}).then(folders => console.log(folders))
+
+            // Return the first folder
+            nylas.folders.first().then(folder => console.log(folder));
+
+            // The following attributes are available for the folder object
+            folder.id
+            folder.object
+            folder.accountId
+            folder.name
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.FolderQuery;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFoldersExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Return all folders found in the user's inbox 
+                    folders.list();
+                    
+                    // Use offset, and limit to control pagination
+                    folders.list(new FolderQuery().limit(2).offset(4));
+                    
+                    // Return the first folder
+                    Folder folder = folders.list(new FolderQuery().limit(1)).get(0);
+                    
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getObject();
+                    folder.getId();
+                    folder.getAccountId();
+                    }
+            }   
+    put:
+      summary: Update a folder
+      tags:
+        - Folders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    account_id: 79xcak1h10r1tmm5ogavx28lb
+                    display_name: Archive
+                    id: ajs4ef7xu74vns6o5ufsu69m7
+                    name: archive
+                    object: folder
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
+      operationId: put-folders-id
+      description: Updates a folder by ID.
+      parameters: []
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            # Return all folders found in the user's inbox
+            curl -X GET 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+
+            # Use offset, and limit to paginate the results
+            curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
+            -H 'Authorization: Bearer ACCESS_TOKEN
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Return all folders found in the user's inbox
+            nylas.folders.all()
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.where(limit=2, offset=4)
+
+            # Return the first folder
+            folder = nylas.folders.first()
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id'
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Return all folders found in the user's inbox
+            nylas.folders
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.limit(2).offset(4)
+
+            # Return the last folder
+            nylas.folders.last
+
+            # Return the first folder
+            folder = nylas.folders.first
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: 'Node.js SDK'
+          source: |-
+            // Return all folders found in the user's inbox
+            nylas.folders.list().then(folders => console.log(folders));
+
+            // Use offset, and limit to paginate the results
+            nylas.folders.list({limit: 2, offset: 4}).then(folders => console.log(folders))
+
+            // Return the first folder
+            nylas.folders.first().then(folder => console.log(folder));
+
+            // The following attributes are available for the folder object
+            folder.id
+            folder.object
+            folder.accountId
+            folder.name
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.FolderQuery;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFoldersExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Return all folders found in the user's inbox 
+                    folders.list();
+                    
+                    // Use offset, and limit to control pagination
+                    folders.list(new FolderQuery().limit(2).offset(4));
+                    
+                    // Return the first folder
+                    Folder folder = folders.list(new FolderQuery().limit(1)).get(0);
+                    
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getObject();
+                    folder.getId();
+                    folder.getAccountId();
+                    }
+            }   
+      security:
+        - ACCESS_TOKEN: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Messages'
+              $ref: '#/components/schemas/Folder-Update'
+            examples:
+              example-1:
+                value:
+                  display_name: My Renamed Folder
+                  name: renamed-folder
+    delete:
+      summary: Delete a folder
+      tags:
+        - Folders
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
+      operationId: delete-folders-id
+      description: Deletes a folder.
       security:
         - ACCESS_TOKEN: []
-      description: Some description here
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            # Return all folders found in the user's inbox
+            curl -X GET 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+
+            # Use offset, and limit to paginate the results
+            curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
+            -H 'Authorization: Bearer ACCESS_TOKEN
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Return all folders found in the user's inbox
+            nylas.folders.all()
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.where(limit=2, offset=4)
+
+            # Return the first folder
+            folder = nylas.folders.first()
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id'
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Return all folders found in the user's inbox
+            nylas.folders
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.limit(2).offset(4)
+
+            # Return the last folder
+            nylas.folders.last
+
+            # Return the first folder
+            folder = nylas.folders.first
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: 'Node.js SDK'
+          source: |-
+            // Return all folders found in the user's inbox
+            nylas.folders.list().then(folders => console.log(folders));
+
+            // Use offset, and limit to paginate the results
+            nylas.folders.list({limit: 2, offset: 4}).then(folders => console.log(folders))
+
+            // Return the first folder
+            nylas.folders.first().then(folder => console.log(folder));
+
+            // The following attributes are available for the folder object
+            folder.id
+            folder.object
+            folder.accountId
+            folder.name
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.FolderQuery;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFoldersExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Return all folders found in the user's inbox 
+                    folders.list();
+                    
+                    // Use offset, and limit to control pagination
+                    folders.list(new FolderQuery().limit(2).offset(4));
+                    
+                    // Return the first folder
+                    Folder folder = folders.list(new FolderQuery().limit(1)).get(0);
+                    
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getObject();
+                    folder.getId();
+                    folder.getAccountId();
+                    }
+            }   
 components:
   schemas:
-    Messages:
-      title: Messages
+    Folder-Object:
+      title: Folder-Object
       type: object
+      x-tags:
+        - Folders
       x-examples: {}
+      description: ''
       properties:
         id:
           type: string
-          description: 'A globally unique object identifier. '
+          example: blrfzbz4r066ip8x1bh8k8g1y
+          description: Globally unique object identifier.
         object:
           type: string
-          description: A string describing the type of object (value is "message")
+          example: folder
+          description: A string describing the type of object (value is "folder").
         account_id:
           type: string
-          description: Reference to a parent account object.
+          example: 79xcak1h10r1tmm5ogavx28lb
+          description: Reference to parent account object.
+        name:
+          type: string
+          example: inbox
+          description: |-
+            Standard categories type, based on [RFC-6154](http://tools.ietf.org/html/rfc6154).
+            Can be one of the following:
+            * inbox
+            * all
+            * trash
+            * archive
+            * drafts
+            * sent
+            * spam
+            * important
+            * null (regular user-created folder)
+        display_name:
+          type: string
+          example: Inbox
+          description: 'Localized name of folder, matching what is presented in their other mail apps. If you are displaying folders, use this instead of `name`.'
+    Folder-Create:
+      title: Folder-Create
+      type: object
+      properties:
+        display_name:
+          type: string
+          description: The human-readable name for the new folder.
+          example: My Renamed Folder
+    Folder-Update:
+      title: Folder-Update
+      type: object
+      properties:
+        display_name:
+          type: string
+          description: The human-readable name for the new folder.
+          example: My Renamed Folder
+        name:
+          type: string
+          description: Specify `sent` to update this folder as the primary sent folder. This feature is supported for custom IMAP accounts only.
+          example: renamed-folder
+    Error-400:
+      title: Error-400
+      type: object
+      x-examples: {}
+      properties:
+        message:
+          type: string
+          description: Error Message
+          example: Error Message
+        type:
+          type: string
+          description: Error Type
+          example: Error Type
   securitySchemes:
+    BASIC_AUTH:
+      type: http
+      scheme: basic
     ACCESS_TOKEN:
       type: http
       scheme: bearer
-    ENCODED_AUTH:
-      type: http
-      scheme: basic
+  headers:
+    Content-Type:
+      in: header
 tags:
-  - name: messages
-    x-tag-expanded: false
+  - name: Folders
     description: |-
-      Messages are the fundamental object of the Nylas platform, and the core building block for most email applications. They contain several pieces of information, such as when a message was sent, the sender's address, to whom it was sent, and the message body. They can also contain files (attachments), calendar event invitations, and more.
+      Folders behave like normal IMAP or filesystem folders. A Message can only exist within one folder at a time, but a Thread with many messages may span several folders.
 
-      <div style="background-color: #F0F0F0;padding: 12px 0px 12px 12px;border-left: 5px solid #F90258;">Although message bodies are represented in HTML, they are generally not safe to directly inject into a web app. This could result in global styles being applied to your app, or the execution of arbitrary JavaScript.</div>
+      Folders are only supported on accounts for which `organization_unit` is folder. You can check if an account supports labels by looking at the organization_unit property on the Account object.
 
-      <br>
+      ## Nested Folders
 
-      # The Message Object
+      IMAP has very limited support for nested folders. It encodes a folder's path in its name. For example, the folder Accounting/Taxes will actually be named Accounting.Taxes or even INBOX.Accounting.Taxes depending on your IMAP server. To complicate things, different IMAP servers use different path separators. For example, Taxes.Accounting on server A may be Taxes\Accounting on server B.
 
-      Responses from the `/messages` endpoint are encoded as UTF-8 JSON objects with the following attributes:
-
-      | Attribute  | Type | Description  |
-      |----:|---|:----|
-      | `id` | string | A globally unique object identifier. |
-      | `object` | string | A string describing the type of object (value is "message").
-      | `account_id` | string | Reference to a parent account object. |
-      | `thread_id` | string | Reference to a parent thread object (all messages have a thread). |
-      | `subject` | string | The subject line of the message. |
-      | `from` | array | A list of name+email pairs the message was sent from. This is usually one object, but can be many. |
-      | `to` | array | An array of name+email pairs the message was sent to. |
-      | `cc` | array | An array of name+email pairs the message was cc'd to. |
-      | `bcc` | array | An array of name+email pairs the message was bcc'd to. For received mail this is nearly always empty (for obvious reasons). |
-      | `reply_to` | array | An array of name+email pairs replies should be sent to. |
-      | `date` | unix timestamp | A timestamp of the date the message was received by the mail server. **Note:** This may be different from the unverified `Date` header in raw message object.
-      | `unread` | boolean | Indicates the message is unread. This is the default for new incoming mail (mutable). |
-      | `starred`  | boolean | Indicates the message is in a starred or flagged state (mutable). |
-      | `snippet`  | string | A shortened plain-text preview of the message body.
-      | `body` |  string | The full HTML message body. Messages with only plain-text representations are up-converted to HTML.
-      | `files`  | array | An array of [File](ref:files) objects, if the message includes attachments.
-      | `events`  | array | An array [Event](ref:events) objects, if message includes calendar invites.
-      | `folder` | folder object | A single folder object indicating the location of the message. This is present only if the parent account's `organization_unit` is `folder`. This property can be changed to move the message to a different folder.
-      | `labels` | array | A list of [Label](ref:labels) objects. This is present only if the parent account's `organization_unit` is `label`. These have Gmail-style semantics and can be arbitrarily added and removed from messages. |
-
-      ## Supported Modifications
-
-      Like [Threads](ref:threads), you can make many modifications to the state of messages. You can:
-
-      1. Modify the unread status.
-      2. Star or unstar the message.
-      3. Move the message to a different folder.
-      4. Modify the message's labels.
-
-      The Nylas APIs expose a parsed and sanitized version of the original [RFC-2822](https://www.ietf.org/rfc/rfc2822.txt) email object, combined with the state from the mail server, such as unread status and folder location. This results in a simple and universal object type, that makes building applications a breeze.
-
-      We still provide access to the [RFC-2822 raw message](ref:raw-message-contents) object, if needed.
-
-      ## Message Views
-
-      Messages support the use of Views by including the view query parameter in your request.
-
-      The expanded message view exposes several additional RFC2822 headers, useful for implementing custom threading or cross-mailbox identification. Pass the view=expanded query parameter when making requests to /messages and /messages/{id}.
-
-      The following block is an example of what is added to the message object when using the expanded view.
-
-      ```json
-      {
-        "headers": {
-          "In-Reply-To": "<evh5uy0shhpm5d0le89goor17-0@mailer.nylas.com>",
-          "Message-Id": "<84umizq7c4jtrew491brpa6iu-0@mailer.nylas.com>",
-          "References": ["<evh5uy0shhpm5d0le89goor17-0@mailer.nylas.com>"],
-        }
-      }
-      ```
-
-      These values are unrelated to Nylas object IDs. Since they are provided by clients without validation, there is no guarantee for their accuracy, uniqueness, or consistency.
-
-      | Header | Requirement | Description |
-      | ----------|-------|-------| 
-      | `Message-Id` | optional | Generated by clients while sending messages. It is different from a message's ID returned by the Nylas API (the message object's `id`). Unlike the `id`, the `Message-Id` header is *not* guaranteed to be unique since it is generated by clients. This field may be null. |
-      | `In-Reply-To` | optional | The parent `Message-Id` to which this message replied. Expected `null` for messages that are not replies. |
-      | `References` | optional | A list of `Message-Id`s related to a given message. Expected empty for messages which are not replies or related to existing messages. |
+      The Nylas API handles nested IMAP folders transparently. Creating a Taxes/Invoices folder using the API will create a folder with the right path separators. e.g: Depending on your server: INBOX.Taxes.Invoices or Taxes/Invoices.
