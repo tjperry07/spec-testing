@@ -1,0 +1,216 @@
+openapi: 3.0.0
+info:
+  version: '2.1'
+  title: Nylas API Template
+  license: {}
+  description: This demonstrates how to document Nylas REST APIs.
+servers:
+  - url: 'https://api.nylas.com'
+paths:
+  /folders:
+    get:
+      summary: Return all folders
+      tags:
+        - Folders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+      operationId: get-folders
+      description: Returns all folders.
+      security:
+        - ACCESS_TOKEN: []
+      parameters:
+        - schema:
+            type: string
+            default: application/json
+          in: header
+          name: Content-Type
+        - schema:
+            type: string
+          in: query
+          name: in
+          description: 'Use the `in` filter with`folder_id`, `name`, `display_name`.'
+    x-code-samples:
+      - lang: Python SDK
+        source: |
+          from nylas import APIClient
+          nylas = APIClient(
+              CLIENT_ID,
+              CLIENT_SECRET,
+              ACCESS_TOKEN
+          )
+
+          # Return all folders found in the user's inbox
+          nylas.folders.all()
+
+          # Use offset, and limit to paginate the results
+          nylas.folders.where(limit=2, offset=4)
+
+          # Return the first folder
+          folder = nylas.folders.first()
+
+          # The following attributes are available for the folder object
+          folder.display_name
+          folder.name
+          folder.object
+          folder.account_id
+          folder.id
+    post:
+      summary: Create a folder
+      tags:
+        - Folders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+      operationId: post-folders
+      description: Updates an existing folder by ID.
+      security:
+        - ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Folder-Create'
+      parameters:
+        - schema:
+            type: string
+            default: application/json
+          in: header
+          name: Content-Type
+  '/folders/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: Return a folder
+      tags:
+        - Folders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+      operationId: get-folders-id
+      description: Returns a folder by ID.
+      security:
+        - ACCESS_TOKEN: []
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: application/json
+    put:
+      summary: Update a folder
+      tags:
+        - Folders
+      responses: {}
+      operationId: put-folders-id
+    delete:
+      summary: Delete a folder
+      tags:
+        - Folders
+      responses: {}
+      operationId: delete-folders-id
+      description: Return a folder.
+      security:
+        - ACCESS_TOKEN: []
+components:
+  schemas:
+    Folder-Object:
+      title: Folder-Object
+      type: object
+      x-tags:
+        - Folders
+      properties:
+        id:
+          type: string
+          description: Globally unique object identifier.
+        object:
+          type: string
+          description: A string describing the type of object (value is "folder").
+        account_id:
+          type: string
+          description: Reference to parent account object.
+        name:
+          type: string
+          description: |-
+            Standard categories type, based on [RFC-6154](http://tools.ietf.org/html/rfc6154).
+            Can be one of the following:
+            * inbox
+            * all
+            * trash
+            * archive
+            * drafts
+            * sent
+            * spam
+            * important
+            * null (regular user-created folder)
+        display_name:
+          type: string
+          description: 'Localized name of folder, matching what is presented in their other mail apps. If you are displaying folders, use this instead of `name`.'
+    Folder-Create:
+      title: Folder-Create
+      type: object
+      properties:
+        display_name:
+          type: string
+          description: The human-readable name for the new folder.
+    Folder-Update:
+      title: Folder-Update
+      type: object
+      properties:
+        id:
+          type: string
+    Error-400:
+      title: Error-400
+      type: object
+      properties:
+        message:
+          type: string
+        type:
+          type: string
+      x-examples:
+        example-1:
+          message: Message about the error
+          type: error_type_goes_here
+  securitySchemes:
+    BASIC_AUTH:
+      type: http
+      scheme: basic
+    ACCESS_TOKEN:
+      type: http
+      scheme: bearer
+  headers:
+    Content-Type:
+      in: header
+tags:
+  - name: Folders
+    description: 'Folders behave like normal IMAP or filesystem folders. A Message can only       exist within one folder at a time, but a Thread with many messages may    span several folders.\n\nFolders are only supported on accounts for which   `organization_unit` is folder. You can check if an account supports labels by looking at the `organization_unit` property on the Account object.\n\n## Nested Folders\nIMAP has very limited support for nested folders. It encodes a folder''s path in its name. For example, the folder Accounting/Taxes will actually be named Accounting.Taxes or even INBOX.Accounting.Taxes depending on your IMAP server. To complicate things, different IMAP servers use different path separators. For example, Taxes.Accounting on server A may be Taxes\\Accounting on server B.\n\nThe Nylas API handles nested IMAP folders transparently. Creating a Taxes/Invoices folder using the API will create a folder with the right path separators.For example, depending on your server: INBOX.Taxes.Invoices or Taxes/Invoices.'
