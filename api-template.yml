@@ -124,7 +124,7 @@ paths:
             folder.object
             folder.account_id
             folder.id'
-        - lang: rb
+        - lang: ruby
           label: Ruby SDK
           source: |-
             # Return all folders found in the user's inbox
