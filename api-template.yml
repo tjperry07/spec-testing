@@ -97,7 +97,8 @@ paths:
             # Use offset, and limit to paginate the results
             curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
             -H 'Authorization: Bearer ACCESS_TOKEN
-        - lang: Python SDK
+        - lang: python
+          name: Python SDK
           source: |-
             from nylas import APIClient
             nylas = APIClient(
@@ -121,7 +122,8 @@ paths:
             folder.object
             folder.account_id
             folder.id'
-        - lang: Ruby SDK
+        - lang: ruby
+          name: Ruby SDK
           source: |-
             # Return all folders found in the user's inbox
             nylas.folders
