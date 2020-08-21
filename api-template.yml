@@ -19,19 +19,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Folder-Object'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    - id: 4zv7p****
+                      object: folder
+                      name: inbox
+                      display_name: INBOX
+                      account_id: awa6lt****
+                    - id: 76zrf****
+                      name: archive
+                      display_name: 2015 Archive
+                      account_id: awa6lto****
+                      object: folder
       operationId: get-folders
       description: Returns all folders.
       security:
         - ACCESS_TOKEN: []
       parameters:
-        - schema:
-            type: string
-            default: application/json
-          in: header
-          name: Content-Type
         - schema:
             type: string
           in: query
@@ -88,12 +93,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Folder-Create'
-      parameters:
-        - schema:
-            type: string
-            default: application/json
-          in: header
-          name: Content-Type
+      parameters: []
   '/folders/{id}':
     parameters:
       - schema:
