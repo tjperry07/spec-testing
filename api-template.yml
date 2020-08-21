@@ -80,32 +80,110 @@ paths:
           in: query
           name: in
           description: 'Use the `in` filter with`folder_id`, `name`, `display_name`.'
-    x-code-samples:
-      - lang: python
-        label: Python SDK
-        source: |
-          from nylas import APIClient
-          nylas = APIClient(
-              CLIENT_ID,
-              CLIENT_SECRET,
-              ACCESS_TOKEN
-          )
+      x-code-samples:
+        - lang: Node + Request
+          source: |
+            const request = require('request');
 
-          # Return all folders found in the user's inbox
-          nylas.folders.all()
+            const options = {
+              method: 'DELETE',
+              url: 'https://api.nylas.com/folders/%7Bid%7D',
+              headers: {authorization: 'Bearer REPLACE_BEARER_TOKEN'}
+            };
 
-          # Use offset, and limit to paginate the results
-          nylas.folders.where(limit=2, offset=4)
+            request(options, function (error, response, body) {
+              if (error) throw new Error(error);
 
-          # Return the first folder
-          folder = nylas.folders.first()
+              console.log(body);
+            });
+        - lang: Shell + Curl
+          source: |-
+            curl --request DELETE \
+              --url https://api.nylas.com/folders/%7Bid%7D \
+              --header 'authorization: Bearer REPLACE_BEARER_TOKEN'
+        - lang: Shell + Httpie
+          source: |-
+            http DELETE https://api.nylas.com/folders/%7Bid%7D \
+              authorization:'Bearer REPLACE_BEARER_TOKEN'
+        - lang: Python + Python3
+          source: |-
+            import http.client
 
-          # The following attributes are available for the folder object
-          folder.display_name
-          folder.name
-          folder.object
-          folder.account_id
-          folder.id
+            conn = http.client.HTTPSConnection("api.nylas.com")
+
+            headers = { 'authorization': "Bearer REPLACE_BEARER_TOKEN" }
+
+            conn.request("DELETE", "/folders/%7Bid%7D", headers=headers)
+
+            res = conn.getresponse()
+            data = res.read()
+
+            print(data.decode("utf-8"))
+        - lang: Php + Curl
+          source: |-
+            <?php
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, [
+              CURLOPT_URL => "https://api.nylas.com/folders/%7Bid%7D",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "DELETE",
+              CURLOPT_HTTPHEADER => [
+                "authorization: Bearer REPLACE_BEARER_TOKEN"
+              ],
+            ]);
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            if ($err) {
+              echo "cURL Error #:" . $err;
+            } else {
+              echo $response;
+            }
+        - lang: Php + Http1
+          source: |-
+            <?php
+
+            $request = new HttpRequest();
+            $request->setUrl('https://api.nylas.com/folders/%7Bid%7D');
+            $request->setMethod(HTTP_METH_DELETE);
+
+            $request->setHeaders([
+              'authorization' => 'Bearer REPLACE_BEARER_TOKEN'
+            ]);
+
+            try {
+              $response = $request->send();
+
+              echo $response->getBody();
+            } catch (HttpException $ex) {
+              echo $ex;
+            }
+        - lang: Php + Http2
+          source: |-
+            <?php
+
+            $client = new http\Client;
+            $request = new http\Client\Request;
+
+            $request->setRequestUrl('https://api.nylas.com/folders/%7Bid%7D');
+            $request->setRequestMethod('DELETE');
+            $request->setHeaders([
+              'authorization' => 'Bearer REPLACE_BEARER_TOKEN'
+            ]);
+
+            $client->enqueue($request)->send();
+            $response = $client->getResponse();
+
+            echo $response->getBody();      
     post:
       summary: Create a folder
       tags:
