@@ -754,3 +754,13 @@ tags:
       IMAP has very limited support for nested folders. It encodes a folder's path in its name. For example, the folder Accounting/Taxes will actually be named Accounting.Taxes or even INBOX.Accounting.Taxes depending on your IMAP server. To complicate things, different IMAP servers use different path separators. For example, Taxes.Accounting on server A may be Taxes\Accounting on server B.
 
       The Nylas API handles nested IMAP folders transparently. Creating a Taxes/Invoices folder using the API will create a folder with the right path separators. e.g: Depending on your server: INBOX.Taxes.Invoices or Taxes/Invoices.
+
+      ## The Folders Object
+
+      | Attribute  | Type | Description  |
+      |----:|---|:----|
+      | `id` | string | Globally unique object identifier. |
+      | `object` | string | A string describing the type of object (value is "folder").
+      | `account_id` | string | Reference to parent account object. |
+      | `name` | string | Standard categories type, based on [RFC-6154](http://tools.ietf.org/html/rfc6154). <br>Can be one of the following: <ul><li>inbox</li><li>all</li><li>trash</li><li>archive</li><li>drafts</li><li>sent</li><li>spam</li><li>important</li><li>null (regular user-created folder)</li></ul>
+      | `display_name`| string | Localized name of folder, matching what is presented in their other mail apps. If you are displaying folders, use this instead of `name`. |
