@@ -25,7 +25,7 @@ paths:
                     - id: 4zv7p****
                       object: folder
                       name: inbox
-                      display_name: INBOX
+                      display_name: ENDPOINT
                       account_id: awa6lt****
                     - id: 76zrf****
                       name: archive
@@ -154,7 +154,7 @@ components:
           - id: 4zv7p****
             object: folder
             name: inbox
-            display_name: INBOX
+            display_name: MODEL
             account_id: awa6lt****
           - id: 76zrf****
             name: archive
