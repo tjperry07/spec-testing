@@ -81,7 +81,8 @@ paths:
           name: in
           description: 'Use the `in` filter with`folder_id`, `name`, `display_name`.'
     x-code-samples:
-      - lang: Python SDK
+      - lang: python
+        label: Python SDK
         source: |
           from nylas import APIClient
           nylas = APIClient(
@@ -335,14 +336,9 @@ components:
     ACCESS_TOKEN:
       type: http
       scheme: bearer
+  headers:
+    Content-Type:
+      in: header
 tags:
   - name: Folders
-    description: |-
-      Folders behave like normal IMAP or filesystem folders. A Message can only exist within one folder at a time, but a Thread with many messages may span several folders.
-
-      Folders are only supported on accounts for which organization_unit is folder. You can check if an account supports labels by looking at the organization_unit property on the Account object.
-
-      ## Nested Folders
-      IMAP has very limited support for nested folders. It encodes a folder's path in its name. For example, the folder Accounting/Taxes will actually be named Accounting.Taxes or even INBOX.Accounting.Taxes depending on your IMAP server. To complicate things, different IMAP servers use different path separators. For example, Taxes.Accounting on server A may be Taxes\Accounting on server B.
-
-      The Nylas API handles nested IMAP folders transparently. Creating a Taxes/Invoices folder using the API will create a folder with the right path separators. e.g: Depending on your server: INBOX.Taxes.Invoices or Taxes/Invoices.
+    description: 'Folders behave like normal IMAP or filesystem folders. A Message can only       exist within one folder at a time, but a Thread with many messages may    span several folders.\n\nFolders are only supported on accounts for which   `organization_unit` is folder. You can check if an account supports labels by looking at the `organization_unit` property on the Account object.\n\n## Nested Folders\nIMAP has very limited support for nested folders. It encodes a folder''s path in its name. For example, the folder Accounting/Taxes will actually be named Accounting.Taxes or even INBOX.Accounting.Taxes depending on your IMAP server. To complicate things, different IMAP servers use different path separators. For example, Taxes.Accounting on server A may be Taxes\\Accounting on server B.\n\nThe Nylas API handles nested IMAP folders transparently. Creating a Taxes/Invoices folder using the API will create a folder with the right path separators.For example, depending on your server: INBOX.Taxes.Invoices or Taxes/Invoices.'
