@@ -18,20 +18,58 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Folder-Object'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder-Object'
               examples:
-                endpoint:
+                example:
                   value:
-                    - id: 4zv7p****
-                      object: folder
-                      name: inbox
-                      display_name: ENDPOINT
-                      account_id: awa6lt****
-                    - id: 76zrf****
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Archive
+                      id: ajs4ef7xu74vns6o5ufsu69m7
                       name: archive
-                      display_name: 2015 Archive
-                      account_id: awa6lto****
                       object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Conversation History
+                      id: etmvbqwqo64vlm73qvyfj2tet
+                      name: null
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Deleted Items
+                      id: blrfzbz4r066ip8x1bh8k8g1y
+                      name: trash
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Drafts
+                      id: a6vnuwv9gjj1xidxkhyzxeke1
+                      name: drafts
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Inbox
+                      id: b8un1ec0syrv94153fg3p61ci
+                      name: inbox
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Junk Email
+                      id: 8tqebvw8t0aky7f2or1oagwt8
+                      name: spam
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Sent Items
+                      id: clzqp0nsim0138aohwzha34vk
+                      name: sent
+                      object: folder
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
       operationId: get-folders
       description: Returns all folders.
       security:
@@ -78,14 +116,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    account_id: 79xcak1h10r1tmm5ogavx28lb
+                    display_name: Archive
+                    id: ajs4ef7xu74vns6o5ufsu69m7
+                    name: archive
+                    object: folder
         '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
       operationId: post-folders
-      description: Updates an existing folder by ID.
+      description: Creates a new folder.
       security:
         - ACCESS_TOKEN: []
       requestBody:
@@ -93,6 +144,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Folder-Create'
+            examples:
+              example-1:
+                value:
+                  display_name: My Renamed Folder
       parameters: []
   '/folders/{id}':
     parameters:
@@ -101,6 +156,7 @@ paths:
         name: id
         in: path
         required: true
+        description: The ID of the folder.
     get:
       summary: Return a folder
       tags:
@@ -112,6 +168,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    account_id: 79xcak1h10r1tmm5ogavx28lb
+                    display_name: Archive
+                    id: ajs4ef7xu74vns6o5ufsu69m7
+                    name: archive
+                    object: folder
         '400':
           description: Bad Request
           content:
@@ -122,58 +186,115 @@ paths:
       description: Returns a folder by ID.
       security:
         - ACCESS_TOKEN: []
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: application/json
+      parameters: []
     put:
       summary: Update a folder
       tags:
         - Folders
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    account_id: 79xcak1h10r1tmm5ogavx28lb
+                    display_name: Archive
+                    id: ajs4ef7xu74vns6o5ufsu69m7
+                    name: archive
+                    object: folder
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
       operationId: put-folders-id
+      description: Updates a folder by ID.
+      parameters: []
+      security:
+        - ACCESS_TOKEN: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Folder-Update'
+            examples:
+              example-1:
+                value:
+                  display_name: My Renamed Folder
+                  name: renamed-folder
     delete:
       summary: Delete a folder
       tags:
         - Folders
-      responses: {}
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
       operationId: delete-folders-id
-      description: Return a folder.
+      description: Deletes a folder.
       security:
         - ACCESS_TOKEN: []
 components:
   schemas:
     Folder-Object:
       title: Folder-Object
-      type: array
+      type: object
       x-tags:
         - Folders
-      x-examples:
-        Model:
-          - id: 4zv7p****
-            object: folder
-            name: inbox
-            display_name: MODEL
-            account_id: awa6lt****
-          - id: 76zrf****
-            name: archive
-            display_name: 2015 Archive
-            account_id: awa6lto****
-            object: folder
-      items:
-        type: object
-        properties:
-          id:
-            type: string
-          object:
-            type: string
-          account_id:
-            type: string
-          name:
-            type: string
-          display_name:
-            type: string
+      x-examples: {}
+      description: ''
+      properties:
+        id:
+          type: string
+          example: blrfzbz4r066ip8x1bh8k8g1y
+          description: Globally unique object identifier.
+        object:
+          type: string
+          example: folder
+          description: A string describing the type of object (value is "folder").
+        account_id:
+          type: string
+          example: 79xcak1h10r1tmm5ogavx28lb
+          description: Reference to parent account object.
+        name:
+          type: string
+          example: inbox
+          description: |-
+            Standard categories type, based on [RFC-6154](http://tools.ietf.org/html/rfc6154).
+            Can be one of the following:
+            * inbox
+            * all
+            * trash
+            * archive
+            * drafts
+            * sent
+            * spam
+            * important
+            * null (regular user-created folder)
+        display_name:
+          type: string
+          example: Inbox
+          description: 'Localized name of folder, matching what is presented in their other mail apps. If you are displaying folders, use this instead of `name`.'
     Folder-Create:
       title: Folder-Create
       type: object
@@ -181,24 +302,32 @@ components:
         display_name:
           type: string
           description: The human-readable name for the new folder.
+          example: My Renamed Folder
     Folder-Update:
       title: Folder-Update
       type: object
       properties:
-        id:
+        display_name:
           type: string
+          description: The human-readable name for the new folder.
+          example: My Renamed Folder
+        name:
+          type: string
+          description: Specify `sent` to update this folder as the primary sent folder. This feature is supported for custom IMAP accounts only.
+          example: renamed-folder
     Error-400:
       title: Error-400
       type: object
+      x-examples: {}
       properties:
         message:
           type: string
+          description: Error Message
+          example: Error Message
         type:
           type: string
-      x-examples:
-        example-1:
-          message: Message about the error
-          type: error_type_goes_here
+          description: Error Type
+          example: Error Type
   securitySchemes:
     BASIC_AUTH:
       type: http
@@ -206,9 +335,14 @@ components:
     ACCESS_TOKEN:
       type: http
       scheme: bearer
-  headers:
-    Content-Type:
-      in: header
 tags:
   - name: Folders
-    description: 'Folders behave like normal IMAP or filesystem folders. A Message can only       exist within one folder at a time, but a Thread with many messages may    span several folders.\n\nFolders are only supported on accounts for which   `organization_unit` is folder. You can check if an account supports labels by looking at the `organization_unit` property on the Account object.\n\n## Nested Folders\nIMAP has very limited support for nested folders. It encodes a folder''s path in its name. For example, the folder Accounting/Taxes will actually be named Accounting.Taxes or even INBOX.Accounting.Taxes depending on your IMAP server. To complicate things, different IMAP servers use different path separators. For example, Taxes.Accounting on server A may be Taxes\\Accounting on server B.\n\nThe Nylas API handles nested IMAP folders transparently. Creating a Taxes/Invoices folder using the API will create a folder with the right path separators.For example, depending on your server: INBOX.Taxes.Invoices or Taxes/Invoices.'
+    description: |-
+      Folders behave like normal IMAP or filesystem folders. A Message can only exist within one folder at a time, but a Thread with many messages may span several folders.
+
+      Folders are only supported on accounts for which organization_unit is folder. You can check if an account supports labels by looking at the organization_unit property on the Account object.
+
+      ## Nested Folders
+      IMAP has very limited support for nested folders. It encodes a folder's path in its name. For example, the folder Accounting/Taxes will actually be named Accounting.Taxes or even INBOX.Accounting.Taxes depending on your IMAP server. To complicate things, different IMAP servers use different path separators. For example, Taxes.Accounting on server A may be Taxes\Accounting on server B.
+
+      The Nylas API handles nested IMAP folders transparently. Creating a Taxes/Invoices folder using the API will create a folder with the right path separators. e.g: Depending on your server: INBOX.Taxes.Invoices or Taxes/Invoices.
