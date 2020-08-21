@@ -82,13 +82,15 @@ paths:
           description: 'Use the `in` filter with`folder_id`, `name`, `display_name`.'
       x-code-samples:
         - lang: HTTP
+          label: HTTP
           source: |
             GET /folders HTTP/1.1
             Host: api.nylas.com
             Content-Type: application/json
             Authorization: Basic WVVUWjZ2****
             cache-control: no-cache
-        - lang: cURL
+        - lang: curl
+          label: cURL
           source: |-
             # Return all folders found in the user's inbox
             curl -X GET 'https://api.nylas.com/folders' \
@@ -98,7 +100,7 @@ paths:
             curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
             -H 'Authorization: Bearer ACCESS_TOKEN
         - lang: python
-          name: Python SDK
+          label: Python SDK
           source: |-
             from nylas import APIClient
             nylas = APIClient(
