@@ -89,7 +89,7 @@ paths:
             Content-Type: application/json
             Authorization: Basic WVVUWjZ2****
             cache-control: no-cache
-        - lang: curl
+        - lang: bash
           label: cURL
           source: |-
             # Return all folders found in the user's inbox
