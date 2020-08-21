@@ -241,6 +241,90 @@ paths:
                 value:
                   display_name: My Renamed Folder
       parameters: []
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            POST /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUW****
+            cache-control: no-cache
+            {
+                "display_name": "My New Folder"
+            }
+        - lang: bash
+          label: cURL
+          source: |-
+            # Create a new folder
+            curl -X POST 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN' \
+            -d '{
+                "display_name": "My New Folder"
+            }'
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Create a new folder
+            folder = nylas.folders.create()
+
+            # The following attributes can be set for a new folder object
+            folder.display_name = "My Custom Folder"
+
+            # Save the folder to Nylas and the 3rd party provider
+            # Note: folder.display_name must be assigned a value before you can save the folder
+            folder.save()
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Create a new folder
+            folder = nylas.folders.create(display_name: 'My Custom Folder')
+
+            # The following attributes can be set for a new folder object
+            folder.display_name = "My Custom Folder"
+
+            # Save the folder to Nylas and the 3rd party provider
+            # Note: folder.display_name must be assigned a value before you can save the folder
+            folder.save
+        - lang: js
+          label: 'Node.js SDK'
+          source: |-
+            // Create a new folder
+            let folder = nylas.folders.build();
+
+            // The following attributes can be set for a new folder object
+            folder.displayName = 'My Custom Folder';
+
+            // Save the folder to Nylas and the 3rd party provider
+            // Note: folder.displayName must be assigned a value before you can save the folder
+            folder.save();
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void postFolderExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Create a new folder with the provided display name
+                    Folder folder = folders.create("My Custom Folder");
+                    }
+            }
   '/folders/{id}':
     parameters:
       - schema:
@@ -279,6 +363,123 @@ paths:
       security:
         - ACCESS_TOKEN: []
       parameters: []
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            # Return all folders found in the user's inbox
+            curl -X GET 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+
+            # Use offset, and limit to paginate the results
+            curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
+            -H 'Authorization: Bearer ACCESS_TOKEN
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Return all folders found in the user's inbox
+            nylas.folders.all()
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.where(limit=2, offset=4)
+
+            # Return the first folder
+            folder = nylas.folders.first()
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id'
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Return all folders found in the user's inbox
+            nylas.folders
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.limit(2).offset(4)
+
+            # Return the last folder
+            nylas.folders.last
+
+            # Return the first folder
+            folder = nylas.folders.first
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: 'Node.js SDK'
+          source: |-
+            // Return all folders found in the user's inbox
+            nylas.folders.list().then(folders => console.log(folders));
+
+            // Use offset, and limit to paginate the results
+            nylas.folders.list({limit: 2, offset: 4}).then(folders => console.log(folders))
+
+            // Return the first folder
+            nylas.folders.first().then(folder => console.log(folder));
+
+            // The following attributes are available for the folder object
+            folder.id
+            folder.object
+            folder.accountId
+            folder.name
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.FolderQuery;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFoldersExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Return all folders found in the user's inbox 
+                    folders.list();
+                    
+                    // Use offset, and limit to control pagination
+                    folders.list(new FolderQuery().limit(2).offset(4));
+                    
+                    // Return the first folder
+                    Folder folder = folders.list(new FolderQuery().limit(1)).get(0);
+                    
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getObject();
+                    folder.getId();
+                    folder.getAccountId();
+                    }
+            }   
     put:
       summary: Update a folder
       tags:
@@ -312,6 +513,123 @@ paths:
       operationId: put-folders-id
       description: Updates a folder by ID.
       parameters: []
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            # Return all folders found in the user's inbox
+            curl -X GET 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+
+            # Use offset, and limit to paginate the results
+            curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
+            -H 'Authorization: Bearer ACCESS_TOKEN
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Return all folders found in the user's inbox
+            nylas.folders.all()
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.where(limit=2, offset=4)
+
+            # Return the first folder
+            folder = nylas.folders.first()
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id'
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Return all folders found in the user's inbox
+            nylas.folders
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.limit(2).offset(4)
+
+            # Return the last folder
+            nylas.folders.last
+
+            # Return the first folder
+            folder = nylas.folders.first
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: 'Node.js SDK'
+          source: |-
+            // Return all folders found in the user's inbox
+            nylas.folders.list().then(folders => console.log(folders));
+
+            // Use offset, and limit to paginate the results
+            nylas.folders.list({limit: 2, offset: 4}).then(folders => console.log(folders))
+
+            // Return the first folder
+            nylas.folders.first().then(folder => console.log(folder));
+
+            // The following attributes are available for the folder object
+            folder.id
+            folder.object
+            folder.accountId
+            folder.name
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.FolderQuery;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFoldersExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Return all folders found in the user's inbox 
+                    folders.list();
+                    
+                    // Use offset, and limit to control pagination
+                    folders.list(new FolderQuery().limit(2).offset(4));
+                    
+                    // Return the first folder
+                    Folder folder = folders.list(new FolderQuery().limit(1)).get(0);
+                    
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getObject();
+                    folder.getId();
+                    folder.getAccountId();
+                    }
+            }   
       security:
         - ACCESS_TOKEN: []
       requestBody:
@@ -346,6 +664,123 @@ paths:
       description: Deletes a folder.
       security:
         - ACCESS_TOKEN: []
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            # Return all folders found in the user's inbox
+            curl -X GET 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+
+            # Use offset, and limit to paginate the results
+            curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
+            -H 'Authorization: Bearer ACCESS_TOKEN
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Return all folders found in the user's inbox
+            nylas.folders.all()
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.where(limit=2, offset=4)
+
+            # Return the first folder
+            folder = nylas.folders.first()
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id'
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Return all folders found in the user's inbox
+            nylas.folders
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.limit(2).offset(4)
+
+            # Return the last folder
+            nylas.folders.last
+
+            # Return the first folder
+            folder = nylas.folders.first
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: 'Node.js SDK'
+          source: |-
+            // Return all folders found in the user's inbox
+            nylas.folders.list().then(folders => console.log(folders));
+
+            // Use offset, and limit to paginate the results
+            nylas.folders.list({limit: 2, offset: 4}).then(folders => console.log(folders))
+
+            // Return the first folder
+            nylas.folders.first().then(folder => console.log(folder));
+
+            // The following attributes are available for the folder object
+            folder.id
+            folder.object
+            folder.accountId
+            folder.name
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.FolderQuery;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFoldersExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Return all folders found in the user's inbox 
+                    folders.list();
+                    
+                    // Use offset, and limit to control pagination
+                    folders.list(new FolderQuery().limit(2).offset(4));
+                    
+                    // Return the first folder
+                    Folder folder = folders.list(new FolderQuery().limit(1)).get(0);
+                    
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getObject();
+                    folder.getId();
+                    folder.getAccountId();
+                    }
+            }   
 components:
   schemas:
     Folder-Object:
