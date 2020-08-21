@@ -433,7 +433,7 @@ components:
 tags:
   - name: Folders
     description: |-
-      Folders behave like normal IMAP or filesystem folders. A Message can only exist within one folder at a time, but a Thread with many messages may span several folders.
+      Folders behave like normal IMAP or file system folders. A Message can only exist within one folder at a time, but a Thread with many messages may span several folders.
 
       Folders are only supported on accounts for which organization_unit is folder. You can check if an account supports labels by looking at the organization_unit property on the Account object.
 
