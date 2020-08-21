@@ -124,7 +124,7 @@ paths:
             folder.object
             folder.account_id
             folder.id'
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             # Return all folders found in the user's inbox
@@ -146,7 +146,7 @@ paths:
             folder.account_id
             folder.id
         - lang: js
-          label: 'JS - Node'
+          label: 'Node.js SDK'
           source: |-
             // Return all folders found in the user's inbox
             nylas.folders.list().then(folders => console.log(folders));
@@ -163,7 +163,8 @@ paths:
             folder.accountId
             folder.name
             folder.displayName
-        - lang: Java SDK
+        - lang: java
+          label: Java SDK
           source: |-
             import java.io.IOException;
             import com.nylas.RequestFailedException;
