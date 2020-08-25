@@ -2,8 +2,12 @@ openapi: 3.0.0
 info:
   version: '2.1'
   title: Nylas API Template
-  license: {}
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
   description: This demonstrates how to document Nylas REST APIs.
+  contact:
+    url: 'http://support.nylas.com/'
 servers:
   - url: 'https://api.nylas.com'
 paths:
@@ -146,7 +150,7 @@ paths:
             folder.account_id
             folder.id
         - lang: js
-          label: 'Node.js SDK'
+          label: Node.js SDK
           source: |-
             // Return all folders found in the user's inbox
             nylas.folders.list().then(folders => console.log(folders));
@@ -294,7 +298,7 @@ paths:
             # Note: folder.display_name must be assigned a value before you can save the folder
             folder.save
         - lang: js
-          label: 'Node.js SDK'
+          label: Node.js SDK
           source: |-
             // Create a new folder
             let folder = nylas.folders.build();
@@ -410,7 +414,7 @@ paths:
             folder.account_id
             folder.id
         - lang: js
-          label: 'Node.js SDK'
+          label: Node.js SDK
           source: |-
             # Replace {id} with the appropriate folder id
             nylas.folders.find('{id}').then(folder => console.log(folder));
@@ -540,7 +544,7 @@ paths:
             # Save folder changes to Nylas and the 3rd party provider
             folder.save
         - lang: js
-          label: 'Node.js SDK'
+          label: Node.js SDK
           source: |-
             // Replace {id} to get a specific folder
             let folder;
@@ -638,7 +642,7 @@ paths:
             # Delete folder
             folder.destroy
         - lang: js
-          label: 'Node.js SDK'
+          label: Node.js SDK
           source: |-
             // Delete folders by specifying the appropriate id
             nylas.folders.delete('{id}');
