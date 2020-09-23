@@ -140,7 +140,7 @@ paths:
             folder.object
             folder.account_id
             folder.id'
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             # Return all folders found in the user's inbox
@@ -296,7 +296,7 @@ paths:
             # Save the folder to Nylas and the 3rd party provider
             # Note: folder.display_name must be assigned a value before you can save the folder
             folder.save()
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             # Create a new folder
@@ -414,7 +414,7 @@ paths:
             folder.object
             folder.account_id
             folder.id
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             # Replace {id} with the appropriate folder id
@@ -568,7 +568,7 @@ paths:
             # Save folder changes to Nylas and the 3rd party provider
             # display_name must be set before calling this function
             folder.save()
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             # Replace {id} to get a specific folder
@@ -668,7 +668,7 @@ paths:
 
             # Delete folders by specifying the appropriate id
             nylas.folders.delete('{id}')
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             # Replace {id} to get a specific folder
@@ -844,7 +844,7 @@ paths:
             # After your user authenticates, Nylas will return a unique, one-time-use code.
             # This code can be used to create an access token that grants access to the user account.
             # See: https://docs.nylas.com/reference#oauthtoken
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             use OmniAuth::Builder do
@@ -961,7 +961,7 @@ paths:
                 - client_secret
                 - grant_type
                 - code
-        description: ''
+        description: 'Send access token.'
         x-code-samples:
           - lang: HTTP
             label: HTTP
@@ -1013,7 +1013,7 @@ paths:
 
               # Now you have a Nylas client object that has access to user data and functionality
               print(nylas.account)
-          - lang: ruby
+          - lang: rb
             label: Ruby SDK
             source: |-
               nylas_token = api.authenticate(
@@ -1133,7 +1133,7 @@ paths:
 
             # You can also revoke all tokens except for one.
             nylas.revoke_all_tokens(keep_access_token='{ACCESS_TOKEN}')
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             # Revoke the nylas access token so it cannot be used in the future (you probably don't want to do this
@@ -1497,7 +1497,7 @@ paths:
                 },
                 "scopes": "email,calendar,contacts"
             }
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             nylas_token = api.authenticate(
@@ -1781,7 +1781,7 @@ paths:
 
             # Now you have a Nylas client object that has access to user data and functionality
             print(nylas.account)
-        - lang: ruby
+        - lang: rb
           label: Ruby SDK
           source: |-
             auth_hash = env['omniauth.auth']
