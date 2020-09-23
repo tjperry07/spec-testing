@@ -927,6 +927,119 @@ paths:
                 $ref: ./api-template.yml#/components/schemas/Error-400
       operationId: post-oauth-token
       description: Send access token.
+      x-code-samples:
+          - lang: HTTP
+            label: HTTP
+            source: |
+              POST /oauth/token HTTP/1.1
+              Host: api.nylas.com
+              Content-Type: application/json
+              Authorization: Basic WVVUW****
+              cache-control: no-cache
+              {
+                  "client_id": "CLIENT_ID",
+                  "client_secret": "CLIENT_SECRET",
+                  "grant_type": "authorization_code",
+                  "code": "AUTHORIZATION_CODE"
+              }------WebKitFormBoundary7MA4YWxkTrZu0gW--
+          - lang: bash
+            label: cURL
+            source: |-
+              curl -X POST \
+                https://api.nylas.com/oauth/token \
+                -H 'Authorization: Basic ENCODED_CLIENT_SECRET' \
+                -d '{
+                  "client_id": "CLIENT_ID",
+                  "client_secret": "CLIENT_SECRET",
+                  "grant_type": "authorization_code",
+                  "code": "AUTHORIZATION_CODE"
+              }'
+          - lang: py
+            label: Python SDK
+            source: |-
+              from nylas import APIClient
+
+              # Create a client that has access to your Nylas app.
+              nylas_app = APIClient(
+                  CLIENT_ID,
+                  CLIENT_SECRET
+              )
+
+              # Get an access token that grants access to user data and functionality.
+              # You need to generate a one-time-use code via Nylas to pass to this function.
+              # See: https://docs.nylas.com/reference#oauthauthorize
+              ACCESS_TOKEN = nylas_app.token_for_code('{code_from_nylas}')
+
+              nylas = APIClient(
+                  CLIENT_ID,
+                  CLIENT_SECRET,
+                  ACCESS_TOKEN
+              )
+
+              # Now you have a Nylas client object that has access to user data and functionality
+              print(nylas.account)
+          - lang: rb
+            label: Ruby SDK
+            source: |-
+              nylas_token = api.authenticate(
+                name: auth_hash[:info][:name],
+                email_address: auth_hash[:info][:email],
+                provider: :gmail,
+                settings: { 
+                  google_client_id: ENV['GOOGLE_CLIENT_ID'],
+                  google_client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+                  google_refresh_token: auth_hash[:credentials][:refresh_token] 
+                }
+              )
+          - lang: js
+            label: Node.js SDK
+            source: |-
+              const Nylas = require('nylas');
+
+              // Pass credentials to the Nylas client to manage authentication
+              Nylas.config({
+              clientId: CLIENT_ID,
+              clientSecret: CLIENT_SECRET,
+              });
+
+              // Get an access token that grants access to user data and functionality.
+              // You need to generate a one-time-use code via Nylas to pass to this function.
+              // See: https://docs.nylas.com/reference#oauthauthorize
+              let access_token;
+              Nylas.exchangeCodeForToken(NYLAS_CODE).then(resp => access_token = resp.access_token);
+
+              // Pass access_token to the Nylas client
+              const nylas = Nylas.with(access_token);
+
+              // Now your Nylas client object has access to user data and functionality
+              nylas.calendars.list();
+          - lang: java
+            label: Java SDK
+            source: |-
+              import java.io.IOException;
+              import com.nylas.RequestFailedException;
+              import com.nylas.NylasApplication;
+              import com.nylas.NylasClient;
+              import com.nylas.NylasAccount;
+              import com.nylas.HostedAuthentication;
+
+              public class NylasExamples {
+                  public static void hostedTokenExample() throws IOException, RequestFailedException {
+                      NylasClient nylas = new NylasClient();
+
+                      // Create a client that has access to your Nylas app.
+                      NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                      HostedAuthentication authentication = application.hostedAuthentication();
+
+                      // Get an access token that grants access to user data and functionality.
+                      // You need to generate a one-time-use code via Nylas to pass to this function.
+                      // See: https://docs.nylas.com/reference#oauthauthorize
+                      String accessToken = authentication.fetchToken("{code}").getAccessToken();
+
+                      // Now you have a Nylas client object that has access to user data and functionality
+                      NylasAccount account = nylas.account(accessToken);
+                  }        
+              }
       parameters:
         - schema:
             type: string
@@ -962,119 +1075,6 @@ paths:
                 - grant_type
                 - code
         description: 'Send access token.'
-        x-code-samples:
-            - lang: HTTP
-              label: HTTP
-              source: |
-                POST /oauth/token HTTP/1.1
-                Host: api.nylas.com
-                Content-Type: application/json
-                Authorization: Basic WVVUW****
-                cache-control: no-cache
-                {
-                    "client_id": "CLIENT_ID",
-                    "client_secret": "CLIENT_SECRET",
-                    "grant_type": "authorization_code",
-                    "code": "AUTHORIZATION_CODE"
-                }------WebKitFormBoundary7MA4YWxkTrZu0gW--
-            - lang: bash
-              label: cURL
-              source: |-
-                curl -X POST \
-                  https://api.nylas.com/oauth/token \
-                  -H 'Authorization: Basic ENCODED_CLIENT_SECRET' \
-                  -d '{
-                    "client_id": "CLIENT_ID",
-                    "client_secret": "CLIENT_SECRET",
-                    "grant_type": "authorization_code",
-                    "code": "AUTHORIZATION_CODE"
-                }'
-            - lang: py
-              label: Python SDK
-              source: |-
-                from nylas import APIClient
-
-                # Create a client that has access to your Nylas app.
-                nylas_app = APIClient(
-                    CLIENT_ID,
-                    CLIENT_SECRET
-                )
-
-                # Get an access token that grants access to user data and functionality.
-                # You need to generate a one-time-use code via Nylas to pass to this function.
-                # See: https://docs.nylas.com/reference#oauthauthorize
-                ACCESS_TOKEN = nylas_app.token_for_code('{code_from_nylas}')
-
-                nylas = APIClient(
-                    CLIENT_ID,
-                    CLIENT_SECRET,
-                    ACCESS_TOKEN
-                )
-
-                # Now you have a Nylas client object that has access to user data and functionality
-                print(nylas.account)
-            - lang: rb
-              label: Ruby SDK
-              source: |-
-                nylas_token = api.authenticate(
-                  name: auth_hash[:info][:name],
-                  email_address: auth_hash[:info][:email],
-                  provider: :gmail,
-                  settings: { 
-                    google_client_id: ENV['GOOGLE_CLIENT_ID'],
-                    google_client_secret: ENV['GOOGLE_CLIENT_SECRET'],
-                    google_refresh_token: auth_hash[:credentials][:refresh_token] 
-                  }
-                )
-            - lang: js
-              label: Node.js SDK
-              source: |-
-                const Nylas = require('nylas');
-
-                // Pass credentials to the Nylas client to manage authentication
-                Nylas.config({
-                clientId: CLIENT_ID,
-                clientSecret: CLIENT_SECRET,
-                });
-
-                // Get an access token that grants access to user data and functionality.
-                // You need to generate a one-time-use code via Nylas to pass to this function.
-                // See: https://docs.nylas.com/reference#oauthauthorize
-                let access_token;
-                Nylas.exchangeCodeForToken(NYLAS_CODE).then(resp => access_token = resp.access_token);
-
-                // Pass access_token to the Nylas client
-                const nylas = Nylas.with(access_token);
-
-                // Now your Nylas client object has access to user data and functionality
-                nylas.calendars.list();
-            - lang: java
-              label: Java SDK
-              source: |-
-                import java.io.IOException;
-                import com.nylas.RequestFailedException;
-                import com.nylas.NylasApplication;
-                import com.nylas.NylasClient;
-                import com.nylas.NylasAccount;
-                import com.nylas.HostedAuthentication;
-
-                public class NylasExamples {
-                    public static void hostedTokenExample() throws IOException, RequestFailedException {
-                        NylasClient nylas = new NylasClient();
-
-                        // Create a client that has access to your Nylas app.
-                        NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
-                        HostedAuthentication authentication = application.hostedAuthentication();
-
-                        // Get an access token that grants access to user data and functionality.
-                        // You need to generate a one-time-use code via Nylas to pass to this function.
-                        // See: https://docs.nylas.com/reference#oauthauthorize
-                        String accessToken = authentication.fetchToken("{code}").getAccessToken();
-
-                        // Now you have a Nylas client object that has access to user data and functionality
-                        NylasAccount account = nylas.account(accessToken);
-                    }        
-                }
       security:
         - BASIC_AUTH: []
   /oauth/revoke:
