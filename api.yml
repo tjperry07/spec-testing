@@ -961,7 +961,6 @@ paths:
   /account:
     get:
       tags:
-        - Apps and Accounts
         - Accounts
       parameters:
         - name: Accept
@@ -1397,7 +1396,6 @@ tags:
       | `display_name`| string | Localized name of folder, matching what is presented in their other mail apps. If you are displaying folders, use this instead of `name`. |
   - name: Hosted Authentication
   - name: Native Authentication
-  - name: Apps and Accounts
   - name: Accounts
     description: |-
       An account corresponds to an email address, mailbox, and optionally a calendar. When connecting to the Nylas API, a specific access token gives you access to a specific account’s data.
