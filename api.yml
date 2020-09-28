@@ -1677,9 +1677,166 @@ paths:
       summary: Exchange the Token
       tags:
         - Native Authentication
-      responses: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Native-Auth-Token'
+              examples:
+                example-1:
+                  value:
+                    access_token: token
+                    account_id: account-id
+                    billing_state: paid
+                    email_address: nyla@nylas.com
+                    id: id
+                    linked_at: 1563496685
+                    name: Nyla The Cheeta
+                    object: account
+                    organization_unit: label
+                    provider: google
+                    sync_state: running
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
       operationId: post-connect-token
-      description: This endpoint is where your application exchanges the code received from /connect/authorize and receives an access token. This associates the mailbox with your Nylas Cloud app.
+      description: |-
+        This endpoint is where your application exchanges the code received from `/connect/authorize` and receives an access token. This associates the mailbox with your Nylas Cloud app.
+
+        A successful response from this will be an account object with an access_token attribute. Once you’ve obtained a token, you include it with Nylas API requests as the HTTP Basic Auth Username.
+
+        You can remove this account from your Nylas Cloud app in the Nylas API console.
+
+        > **Never send your client secret to a browser!**
+        This request should be made from your server. It's important that you never send your client secret to a browser. In order to do this, your browser JavaScript code should securely send the received code in the previous step to your web app, which in turn makes the request to `/connect/token`.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |-
+            POST /connect/token HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            cache-control: no-cache
+            {
+                "client_id": "95fm****",
+                "client_secret": "5s827****",
+                "code": "fZztR****"
+            }
+
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X POST "https://api.nylas.com/connect/token" -d '{
+              "client_id": "{client-id}",
+              "client_secret": "{client-secret}",
+              "code": "{nylas_code}"
+            }'
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            
+            # Create a client that has access to your Nylas app.
+            nylas_app = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET
+            )
+            
+            # Get an access token that grants access to user data and functionality.
+            # You need to generate a one-time-use code via Nylas to pass to this function.
+            # See: https://docs.nylas.com/reference#connectauthorize
+            ACCESS_TOKEN = nylas_app.token_for_code('{code_from_nylas}')
+            
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+            
+            # Now you have a Nylas client object that has access to user data and functionality
+            print(nylas.account)
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            auth_hash = env['omniauth.auth']
+            
+            nylas_token = api.authenticate(name: auth_hash[:info][:name], 
+              	email_address: auth_hash[:info][:email], 
+                provider: :gmail, settings:
+                { 
+                  google_client_id: ENV['GOOGLE_CLIENT_ID'],
+                  google_client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+                  google_refresh_token: auth_hash[:credentials][:refresh_token] })
+            
+            api_as_user = api.as(nylas_token)
+        - lang: js
+          label: Node.js SDK
+          source: |-
+            // The following examples will return a Promise, which resolves to a Nylas account, complete with account id and access token.
+            // This access token grants full access to user account functionality.
+            
+            const Nylas = require('nylas');
+            
+            Nylas.config({
+              clientId: CLIENT_ID,
+              clientSecret: CLIENT_SECRET,
+            });
+            
+            // First, you need to generate a one-time-use code via Nylas
+            // See: https://docs.nylas.com/reference#connectauthorize
+            let access_code;
+            
+            Nylas.connect.authorize({
+              name: 'Nyla The Cheetah',
+              email_address: 'nyla@gmail.com',
+              provider: 'gmail',
+              settings: {
+                google_client_id: '{google_api_client_id}',
+                google_client_secret: '{google_api_client_secret}',
+                google_refresh_token: '{google_api_refresh_token}',
+              },
+              scopes: 'email.read_only,calendar.read_only,contacts.read_only'
+            }).then(resp => access_code = resp.code);
+            
+            // Use this code to connect the account to your Nylas Application
+            let account;
+            Nylas.connect.token(access_code).then(resp => account = resp);
+            
+            // Use the account's access token to get a Nylas client with access to the account's data and functionality
+            const nylas = Nylas.with(account.access_token);
+            nylas.calendars.list().then(resp => console.log(resp));
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasApplication;
+            import com.nylas.NylasClient;
+            import com.nylas.NylasAccount;
+            import com.nylas.NativeAuthentication;
+            
+            
+            public class NylasExamples {
+                public static void nativeTokenExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    // Create a client that has access to your Nylas app.
+                    NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                    NativeAuthentication authentication = application.nativeAuthentication();
+            
+                    // Get an access token that grants access to user data and functionality.
+                    // You need to generate a one-time-use code via Nylas to pass to this function.
+                    // See: https://docs.nylas.com/reference#connectauthorize
+                    String accessToken = authentication.fetchToken("{code}").getAccessToken();
+            
+                    // Now you have a Nylas client object that has access to user data and functionality
+                    NylasAccount account = nylas.account(accessToken);
+                }
+            }
       parameters:
         - schema:
             type: string
@@ -1693,6 +1850,25 @@ paths:
           in: header
           name: Accept
           required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                  description: Your client ID from the Nylas Developer console.
+                client_secret:
+                  type: string
+                  description: Your client secret from the Nylas Developer console.
+                code:
+                  type: string
+                  description: The value returned from calling `/connect/authorize`.
+              required:
+                - client_id
+                - client_secret
+                - code
 components:
   schemas:
     Folder-Object:
