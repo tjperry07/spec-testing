@@ -1575,10 +1575,7 @@ paths:
         - ACCESS_TOKEN: []
       operationId: get-account
       summary: Return an Account
-      description: |-
-        Returns account details.
-
-        Requires an account access token.
+      description: Returns account details.
       x-code-samples:
         - lang: HTTP
           label: HTTP
@@ -1717,6 +1714,129 @@ paths:
 
         > **Never send your client secret to a browser!**
         This request should be made from your server. It's important that you never send your client secret to a browser. In order to do this, your browser JavaScript code should securely send the received code in the previous step to your web app, which in turn makes the request to `/connect/token`.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |-
+            POST /connect/token HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            cache-control: no-cache
+            {
+                "client_id": "95fm****",
+                "client_secret": "5s827****",
+                "code": "fZztR****"
+            }
+
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X POST "https://api.nylas.com/connect/token" -d '{
+              "client_id": "{client-id}",
+              "client_secret": "{client-secret}",
+              "code": "{nylas_code}"
+            }'
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            
+            # Create a client that has access to your Nylas app.
+            nylas_app = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET
+            )
+            
+            # Get an access token that grants access to user data and functionality.
+            # You need to generate a one-time-use code via Nylas to pass to this function.
+            # See: https://docs.nylas.com/reference#connectauthorize
+            ACCESS_TOKEN = nylas_app.token_for_code('{code_from_nylas}')
+            
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+            
+            # Now you have a Nylas client object that has access to user data and functionality
+            print(nylas.account)
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            auth_hash = env['omniauth.auth']
+            
+            nylas_token = api.authenticate(name: auth_hash[:info][:name], 
+              	email_address: auth_hash[:info][:email], 
+                provider: :gmail, settings:
+                { 
+                  google_client_id: ENV['GOOGLE_CLIENT_ID'],
+                  google_client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+                  google_refresh_token: auth_hash[:credentials][:refresh_token] })
+            
+            api_as_user = api.as(nylas_token)
+        - lang: js
+          label: Node.js SDK
+          source: |-
+            // The following examples will return a Promise, which resolves to a Nylas account, complete with account id and access token.
+            // This access token grants full access to user account functionality.
+            
+            const Nylas = require('nylas');
+            
+            Nylas.config({
+              clientId: CLIENT_ID,
+              clientSecret: CLIENT_SECRET,
+            });
+            
+            // First, you need to generate a one-time-use code via Nylas
+            // See: https://docs.nylas.com/reference#connectauthorize
+            let access_code;
+            
+            Nylas.connect.authorize({
+              name: 'Nyla The Cheetah',
+              email_address: 'nyla@gmail.com',
+              provider: 'gmail',
+              settings: {
+                google_client_id: '{google_api_client_id}',
+                google_client_secret: '{google_api_client_secret}',
+                google_refresh_token: '{google_api_refresh_token}',
+              },
+              scopes: 'email.read_only,calendar.read_only,contacts.read_only'
+            }).then(resp => access_code = resp.code);
+            
+            // Use this code to connect the account to your Nylas Application
+            let account;
+            Nylas.connect.token(access_code).then(resp => account = resp);
+            
+            // Use the account's access token to get a Nylas client with access to the account's data and functionality
+            const nylas = Nylas.with(account.access_token);
+            nylas.calendars.list().then(resp => console.log(resp));
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasApplication;
+            import com.nylas.NylasClient;
+            import com.nylas.NylasAccount;
+            import com.nylas.NativeAuthentication;
+            
+            
+            public class NylasExamples {
+                public static void nativeTokenExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    // Create a client that has access to your Nylas app.
+                    NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                    NativeAuthentication authentication = application.nativeAuthentication();
+            
+                    // Get an access token that grants access to user data and functionality.
+                    // You need to generate a one-time-use code via Nylas to pass to this function.
+                    // See: https://docs.nylas.com/reference#connectauthorize
+                    String accessToken = authentication.fetchToken("{code}").getAccessToken();
+            
+                    // Now you have a Nylas client object that has access to user data and functionality
+                    NylasAccount account = nylas.account(accessToken);
+                }
+            }
       parameters:
         - schema:
             type: string
@@ -1817,6 +1937,120 @@ paths:
           in: query
           name: offset
           description: 'Zero-based offset from default object sorting. See [pagination](#link) for more information.'
+          x-code-samples:
+            - lang: HTTP
+              label: HTTP
+              source: |-
+                GET /a/95fm****/accounts/ HTTP/1.1
+                Host: api.nylas.com
+                Content-Type: application/json
+                Authorization: Basic e3tj****
+                cache-control: no-cache
+            - lang: bash
+              label: cURL
+              source: |-
+                curl -X GET \
+                https://api.nylas.com/a/{client_id}/accounts/ \
+              	-H 'Authorization: Basic ENCODED_SECRET'
+            - lang: py
+              label: Python SDK
+              source: |-
+                nylas = APIClient(
+                    CLIENT_ID,
+                    CLIENT_SECRET
+                )
+                
+                # Return a list of dictionary objects that represent all accounts connected to an app
+                accounts = nylas.accounts.all()
+                
+                # Return an account specified by a specific id
+                account = nylas.accounts.get('{id}')
+                
+                # Return the first account
+                account = nylas.accounts.first()
+                
+                # The following attributes are available for the account object
+                account.email
+                account.id
+                account.sync_state
+                account.billing_state
+                account.trial
+            - lang: ruby
+              label: Ruby SDK
+              source: |-
+                nylas = Nylas::API.new(
+                    app_id: CLIENT_ID,
+                    app_secret: CLIENT_SECRET
+                )
+                
+                # Return a list of dictionary objects that represent all accounts connected to an app
+                accounts = nylas.accounts
+                
+                # Return an account specified by a specific id
+                account = nylas.accounts.find('{id}')
+                
+                # Return the first account
+                account = nylas.accounts.first
+                
+                # The following attributes are available for the account object
+                account.email
+                account.id
+                account.sync_state
+                account.billing_state
+                account.trial
+            - lang: JS
+              label: Node.js SDK
+              source: |-
+                const Nylas = require('nylas');
+                Nylas.config({clientId: 'clientId', clientSecret: 'clientSecret'});
+                
+                Nylas.accounts.list().then(accounts => console.log(accounts));
+                
+                // Get an account specified by a specific id
+                Nylas.accounts.find('accountId').then(account => console.log(account));
+                
+                // Get the first account
+                Nylas.accounts.first().then(account => console.log(account));
+                
+                // The following attributes are available for the Account object
+                account.id
+                account.accountId
+                account.billingState
+                account.emailAddress
+                account.provider
+                account.syncState
+                account.trial
+                account.clientId
+            - lang: java
+              label: Java SDK
+              source: |-
+                import java.io.IOException;
+                import com.nylas.RequestFailedException;
+                import com.nylas.NylasApplication;
+                import com.nylas.NylasClient;
+                import com.nylas.Account;
+                import com.nylas.Accounts;
+                
+                public class NylasExamples {
+                    public static void getAccountsExample() throws IOException, RequestFailedException {
+                        NylasClient nylas = new NylasClient();
+                        NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                        Accounts accounts = application.accounts();
+                        
+                        // Return all accounts connected to your Nylas app
+                        accounts.list();
+                
+                        // Return an account by specifying its ID
+                        Account account = accounts.get("{accountId}");
+                        
+                        // The following attributes are available for the account object
+                        account.getBillingState();
+                        account.getEmail();
+                        account.getProvider();
+                        account.getSyncState();
+                        account.getTrial();
+                        }
+                }
     parameters:
       - schema:
           type: string
@@ -1826,36 +2060,6 @@ paths:
         description: The client ID of your Nylas developer application.
 components:
   schemas:
-    Account-Return-All:
-      title: Account-Return-All
-      type: object
-      properties:
-        account_id:
-          type: string
-          description: A reference to the parent account object (self-referential in this case.
-        billing_state:
-          type: string
-          description: 'The billing state for the account. Values are `paid`, `cancelled`, or `deleted`.'
-          enum:
-            - paid
-            - cancelled
-            - deleted
-            - free
-        email:
-          type: string
-          description: The email address of the account.
-        id:
-          type: string
-          description: A globally unique object identifier.
-        provider:
-          type: string
-          description: Specifies the provider that backs the account.
-        sync_state:
-          type: string
-          description: The current sync state for the account.
-        trial:
-          type: boolean
-          description: The trial state for the application.
     Folder-Object:
       title: Folder-Object
       description: ''
@@ -2131,7 +2335,7 @@ components:
         id:
           type: string
         linked_at:
-          type: integer
+          type: string
         name:
           type: string
         object:
@@ -2175,7 +2379,6 @@ tags:
       | `display_name`| string | Localized name of folder, matching what is presented in their other mail apps. If you are displaying folders, use this instead of `name`. |
   - name: Hosted Authentication
   - name: Native Authentication
-  - name: Account Management
   - name: Accounts
     description: |-
       An account corresponds to an email address, mailbox, and optionally a calendar. When connecting to the Nylas API, a specific access token gives you access to a specific account’s data.
