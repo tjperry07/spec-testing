@@ -1911,6 +1911,120 @@ paths:
         Returns a list of all accounts.
 
         > The Account Management API can send a request for all accounts with only the client ID and secret passed to it (unlike the account API, which requires an account access token).
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |-
+            GET /a/95fm****/accounts/ HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic e3tj****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X GET \
+            https://api.nylas.com/a/{client_id}/accounts/ \
+          	-H 'Authorization: Basic ENCODED_SECRET'
+        - lang: py
+          label: Python SDK
+          source: |-
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET
+            )
+            
+            # Return a list of dictionary objects that represent all accounts connected to an app
+            accounts = nylas.accounts.all()
+            
+            # Return an account specified by a specific id
+            account = nylas.accounts.get('{id}')
+            
+            # Return the first account
+            account = nylas.accounts.first()
+            
+            # The following attributes are available for the account object
+            account.email
+            account.id
+            account.sync_state
+            account.billing_state
+            account.trial
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            nylas = Nylas::API.new(
+                app_id: CLIENT_ID,
+                app_secret: CLIENT_SECRET
+            )
+            
+            # Return a list of dictionary objects that represent all accounts connected to an app
+            accounts = nylas.accounts
+            
+            # Return an account specified by a specific id
+            account = nylas.accounts.find('{id}')
+            
+            # Return the first account
+            account = nylas.accounts.first
+            
+            # The following attributes are available for the account object
+            account.email
+            account.id
+            account.sync_state
+            account.billing_state
+            account.trial
+        - lang: JS
+          label: Node.js SDK
+          source: |-
+            const Nylas = require('nylas');
+            Nylas.config({clientId: 'clientId', clientSecret: 'clientSecret'});
+            
+            Nylas.accounts.list().then(accounts => console.log(accounts));
+            
+            // Get an account specified by a specific id
+            Nylas.accounts.find('accountId').then(account => console.log(account));
+            
+            // Get the first account
+            Nylas.accounts.first().then(account => console.log(account));
+            
+            // The following attributes are available for the Account object
+            account.id
+            account.accountId
+            account.billingState
+            account.emailAddress
+            account.provider
+            account.syncState
+            account.trial
+            account.clientId
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasApplication;
+            import com.nylas.NylasClient;
+            import com.nylas.Account;
+            import com.nylas.Accounts;
+            
+            public class NylasExamples {
+                public static void getAccountsExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                    Accounts accounts = application.accounts();
+                    
+                    // Return all accounts connected to your Nylas app
+                    accounts.list();
+            
+                    // Return an account by specifying its ID
+                    Account account = accounts.get("{accountId}");
+                    
+                    // The following attributes are available for the account object
+                    account.getBillingState();
+                    account.getEmail();
+                    account.getProvider();
+                    account.getSyncState();
+                    account.getTrial();
+                    }
+            }
       security:
         - ACCESS_TOKEN: []
       parameters:
@@ -1937,120 +2051,6 @@ paths:
           in: query
           name: offset
           description: 'Zero-based offset from default object sorting. See [pagination](#link) for more information.'
-          x-code-samples:
-            - lang: HTTP
-              label: HTTP
-              source: |-
-                GET /a/95fm****/accounts/ HTTP/1.1
-                Host: api.nylas.com
-                Content-Type: application/json
-                Authorization: Basic e3tj****
-                cache-control: no-cache
-            - lang: bash
-              label: cURL
-              source: |-
-                curl -X GET \
-                https://api.nylas.com/a/{client_id}/accounts/ \
-              	-H 'Authorization: Basic ENCODED_SECRET'
-            - lang: py
-              label: Python SDK
-              source: |-
-                nylas = APIClient(
-                    CLIENT_ID,
-                    CLIENT_SECRET
-                )
-                
-                # Return a list of dictionary objects that represent all accounts connected to an app
-                accounts = nylas.accounts.all()
-                
-                # Return an account specified by a specific id
-                account = nylas.accounts.get('{id}')
-                
-                # Return the first account
-                account = nylas.accounts.first()
-                
-                # The following attributes are available for the account object
-                account.email
-                account.id
-                account.sync_state
-                account.billing_state
-                account.trial
-            - lang: ruby
-              label: Ruby SDK
-              source: |-
-                nylas = Nylas::API.new(
-                    app_id: CLIENT_ID,
-                    app_secret: CLIENT_SECRET
-                )
-                
-                # Return a list of dictionary objects that represent all accounts connected to an app
-                accounts = nylas.accounts
-                
-                # Return an account specified by a specific id
-                account = nylas.accounts.find('{id}')
-                
-                # Return the first account
-                account = nylas.accounts.first
-                
-                # The following attributes are available for the account object
-                account.email
-                account.id
-                account.sync_state
-                account.billing_state
-                account.trial
-            - lang: JS
-              label: Node.js SDK
-              source: |-
-                const Nylas = require('nylas');
-                Nylas.config({clientId: 'clientId', clientSecret: 'clientSecret'});
-                
-                Nylas.accounts.list().then(accounts => console.log(accounts));
-                
-                // Get an account specified by a specific id
-                Nylas.accounts.find('accountId').then(account => console.log(account));
-                
-                // Get the first account
-                Nylas.accounts.first().then(account => console.log(account));
-                
-                // The following attributes are available for the Account object
-                account.id
-                account.accountId
-                account.billingState
-                account.emailAddress
-                account.provider
-                account.syncState
-                account.trial
-                account.clientId
-            - lang: java
-              label: Java SDK
-              source: |-
-                import java.io.IOException;
-                import com.nylas.RequestFailedException;
-                import com.nylas.NylasApplication;
-                import com.nylas.NylasClient;
-                import com.nylas.Account;
-                import com.nylas.Accounts;
-                
-                public class NylasExamples {
-                    public static void getAccountsExample() throws IOException, RequestFailedException {
-                        NylasClient nylas = new NylasClient();
-                        NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
-                        Accounts accounts = application.accounts();
-                        
-                        // Return all accounts connected to your Nylas app
-                        accounts.list();
-                
-                        // Return an account by specifying its ID
-                        Account account = accounts.get("{accountId}");
-                        
-                        // The following attributes are available for the account object
-                        account.getBillingState();
-                        account.getEmail();
-                        account.getProvider();
-                        account.getSyncState();
-                        account.getTrial();
-                        }
-                }
     parameters:
       - schema:
           type: string
@@ -2060,6 +2060,36 @@ paths:
         description: The client ID of your Nylas developer application.
 components:
   schemas:
+    Account-Return-All:
+      title: Account-Return-All
+      type: object
+      properties:
+        account_id:
+          type: string
+          description: A reference to the parent account object (self-referential in this case.
+        billing_state:
+          type: string
+          description: 'The billing state for the account. Values are `paid`, `cancelled`, or `deleted`.'
+          enum:
+            - paid
+            - cancelled
+            - deleted
+            - free
+        email:
+          type: string
+          description: The email address of the account.
+        id:
+          type: string
+          description: A globally unique object identifier.
+        provider:
+          type: string
+          description: Specifies the provider that backs the account.
+        sync_state:
+          type: string
+          description: The current sync state for the account.
+        trial:
+          type: boolean
+          description: The trial state for the application.
     Folder-Object:
       title: Folder-Object
       description: ''
