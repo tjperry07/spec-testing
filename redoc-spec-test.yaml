@@ -1,0 +1,2954 @@
+openapi: 3.0.0
+info:
+  title: Nylas API Template
+  version: '2.1'
+  description: This demonstrates how to document Nylas REST APIs.
+  contact:
+    url: 'http://support.nylas.com/'
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+  x-logo:
+    url: ''
+servers:
+  - url: 'https://api.nylas.com'
+paths:
+  /folders:
+    get:
+      tags:
+        - Folders
+      parameters:
+        - name: in
+          description: 'Use the `in` filter with`folder_id`, `name`, `display_name`.'
+          schema:
+            type: string
+          in: query
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example:
+                  value:
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Archive
+                      id: ajs4ef7xu74vns6o5ufsu69m7
+                      name: archive
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Conversation History
+                      id: etmvbqwqo64vlm73qvyfj2tet
+                      name: string
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Deleted Items
+                      id: blrfzbz4r066ip8x1bh8k8g1y
+                      name: trash
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Drafts
+                      id: a6vnuwv9gjj1xidxkhyzxeke1
+                      name: drafts
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Inbox
+                      id: b8un1ec0syrv94153fg3p61ci
+                      name: inbox
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Junk Email
+                      id: 8tqebvw8t0aky7f2or1oagwt8
+                      name: spam
+                      object: folder
+                    - account_id: 79xcak1h10r1tmm5ogavx28lb
+                      display_name: Sent Items
+                      id: clzqp0nsim0138aohwzha34vk
+                      name: sent
+                      object: folder
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
+          description: Bad Request
+      security:
+        - ACCESS_TOKEN: []
+      operationId: get-folders
+      summary: Return all folders
+      description: Returns all folders.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            # Return all folders found in the user's inbox
+            curl -X GET 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+
+            # Use offset, and limit to paginate the results
+            curl -X GET 'https://api.nylas.com/folders?limit=2&offset=4' \
+            -H 'Authorization: Bearer ACCESS_TOKEN
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Return all folders found in the user's inbox
+            nylas.folders.all()
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.where(limit=2, offset=4)
+
+            # Return the first folder
+            folder = nylas.folders.first()
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id'
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Return all folders found in the user's inbox
+            nylas.folders
+
+            # Use offset, and limit to paginate the results
+            nylas.folders.limit(2).offset(4)
+
+            # Return the last folder
+            nylas.folders.last
+
+            # Return the first folder
+            folder = nylas.folders.first
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: Node.js SDK
+          source: >-
+            // Return all folders found in the user's inbox
+
+            nylas.folders.list().then(folders => console.log(folders));
+
+
+            // Use offset, and limit to paginate the results
+
+            nylas.folders.list({limit: 2, offset: 4}).then(folders =>
+            console.log(folders))
+
+
+            // Return the first folder
+
+            nylas.folders.first().then(folder => console.log(folder));
+
+
+            // The following attributes are available for the folder object
+
+            folder.id
+
+            folder.object
+
+            folder.accountId
+
+            folder.name
+
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.FolderQuery;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFoldersExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Return all folders found in the user's inbox 
+                    folders.list();
+                    
+                    // Use offset, and limit to control pagination
+                    folders.list(new FolderQuery().limit(2).offset(4));
+                    
+                    // Return the first folder
+                    Folder folder = folders.list(new FolderQuery().limit(1)).get(0);
+                    
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getObject();
+                    folder.getId();
+                    folder.getAccountId();
+                    }
+            }    
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Folder-Create'
+            examples:
+              example-1:
+                value:
+                  display_name: My Renamed Folder
+      tags:
+        - Folders
+      parameters:
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    account_id: 79xcak1h10r1tmm5ogavx28lb
+                    display_name: Archive
+                    id: ajs4ef7xu74vns6o5ufsu69m7
+                    name: archive
+                    object: folder
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
+          description: Bad Request
+      security:
+        - ACCESS_TOKEN: []
+      operationId: post-folders
+      summary: Create a folder
+      description: Creates a new folder.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            POST /folders HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUW****
+            cache-control: no-cache
+            {
+                "display_name": "My New Folder"
+            }
+        - lang: bash
+          label: cURL
+          source: |-
+            # Create a new folder
+            curl -X POST 'https://api.nylas.com/folders' \
+            -H 'Authorization: Bearer ACCESS_TOKEN' \
+            -d '{
+                "display_name": "My New Folder"
+            }'
+        - lang: py
+          label: Python SDK
+          source: >-
+            from nylas import APIClient
+
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+
+            # Create a new folder
+
+            folder = nylas.folders.create()
+
+
+            # The following attributes can be set for a new folder object
+
+            folder.display_name = "My Custom Folder"
+
+
+            # Save the folder to Nylas and the 3rd party provider
+
+            # Note: folder.display_name must be assigned a value before you can
+            save the folder
+
+            folder.save()
+        - lang: ruby
+          label: Ruby SDK
+          source: >-
+            # Create a new folder
+
+            folder = nylas.folders.create(display_name: 'My Custom Folder')
+
+
+            # The following attributes can be set for a new folder object
+
+            folder.display_name = "My Custom Folder"
+
+
+            # Save the folder to Nylas and the 3rd party provider
+
+            # Note: folder.display_name must be assigned a value before you can
+            save the folder
+
+            folder.save
+        - lang: js
+          label: Node.js SDK
+          source: >-
+            // Return all folders found in the user's inbox
+
+            nylas.folders.list().then(folders => console.log(folders));
+
+
+            // Use offset, and limit to paginate the results
+
+            nylas.folders.list({limit: 2, offset: 4}).then(folders =>
+            console.log(folders))
+
+
+            // Return the first folder
+
+            nylas.folders.first().then(folder => console.log(folder));
+
+
+            // The following attributes are available for the folder object
+
+            folder.id
+
+            folder.object
+
+            folder.accountId
+
+            folder.name
+
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void postFolderExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Create a new folder with the provided display name
+                    Folder folder = folders.create("My Custom Folder");
+                    }
+            }
+  '/folders/{id}':
+    get:
+      tags:
+        - Folders
+      parameters:
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    account_id: 79xcak1h10r1tmm5ogavx28lb
+                    display_name: Archive
+                    id: ajs4ef7xu74vns6o5ufsu69m7
+                    name: archive
+                    object: folder
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+          description: Bad Request
+      security:
+        - ACCESS_TOKEN: []
+      operationId: get-folders-id
+      summary: Return a folder
+      description: Returns a folder by ID.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /folders/4zv7p**** HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUWjZ2****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X GET 'https://api.nylas.com/folders/{folder_id}' \
+            -H 'Authorization: Bearer ACCESS_TOKEN'
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+            # Replace {id} with the appropriate folder id
+            folder = nylas.folders.get('{id}')
+
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Replace {id} with the appropriate folder id
+            folder = nylas.folders.find('{id}')
+
+
+            # The following attributes are available for the folder object
+            folder.display_name
+            folder.name
+            folder.object
+            folder.account_id
+            folder.id
+        - lang: js
+          label: Node.js SDK
+          source: |-
+            # Replace {id} with the appropriate folder id
+            nylas.folders.find('{id}').then(folder => console.log(folder));
+
+
+            # The following attributes are available for the folder object
+            folder.id
+            folder.object
+            folder.accountId
+            folder.name
+            folder.displayName
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folder;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void getFolderExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+                    
+                    // Replace {id} with the appropriate folder id
+                    Folder folder = folders.get("{id}");
+
+                    // The following attributes are available for the folder object
+                    folder.getDisplayName();
+                    folder.getName();
+                    folder.getId();
+                    folder.getAccountId();
+                    folder.getObject();
+                    }
+            }
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Folder-Update'
+            examples:
+              example-1:
+                value:
+                  display_name: My Renamed Folder
+                  name: renamed-folder
+      tags:
+        - Folders
+      parameters:
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Folder-Object'
+              examples:
+                example-1:
+                  value:
+                    account_id: 79xcak1h10r1tmm5ogavx28lb
+                    display_name: Archive
+                    id: ajs4ef7xu74vns6o5ufsu69m7
+                    name: archive
+                    object: folder
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
+          description: Bad Request
+      security:
+        - ACCESS_TOKEN: []
+      operationId: put-folders-id
+      summary: Update a folder
+      description: Updates a folder by ID.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            PUT /folders/51si**** HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVU****
+            Accept: */*
+            Cache-Control: no-cache
+            Host: api.nylas.com
+            accept-encoding: gzip, deflate
+            content-length: 43
+            Connection: keep-alive
+            cache-control: no-cache
+
+            {
+                "display_name": "My Renamed Folder"
+            }
+        - lang: bash
+          label: cURL
+          source: |-
+            # Replace {id} to get a specific folder
+            curl -X PUT 'https://api.nylas.com/folders/{folder_id}' \
+            -H 'Authorization: Bearer ACCESS_TOKEN' \
+            -d '{
+                "display_name": "My New Folder Renamed"
+            }'
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+            # Replace {id} to get a specific folder
+            folder = nylas.folders.get('{id}')
+
+            # The following attributes can be set for a new folder object
+            folder.display_name = "My Custom Folder"
+
+            # Save folder changes to Nylas and the 3rd party provider
+            # display_name must be set before calling this function
+            folder.save()
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Replace {id} to get a specific folder
+            folder = nylas.folders.find('{id}')
+
+            # The following attributes can be set for a new folder object
+            folder.display_name = "My Custom Folder"
+
+            # Save folder changes to Nylas and the 3rd party provider
+            folder.save
+        - lang: js
+          label: Node.js SDK
+          source: |-
+            // Replace {id} to get a specific folder
+            let folder;
+            nylas.folders.find('{id}').then(res => folder = res);
+
+            // The following attributes can be set for a new folder object
+            folder.displayName = 'My Custom Folder';
+
+            // Save folder changes to Nylas and the 3rd party provider
+            folder.save();
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void putFolderExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+
+                    // Update a folder's display name by passing the folder ID and the new name.
+                    folders.setDisplayName("{folder_id}", "My Custom Label");
+                    }
+            } 
+    delete:
+      tags:
+        - Folders
+      parameters:
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+      responses:
+        '200':
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+              examples:
+                example-1:
+                  value:
+                    message: Error Message
+                    type: Error Type
+          description: Bad Request
+      security:
+        - ACCESS_TOKEN: []
+      operationId: delete-folders-id
+      summary: Delete a folder
+      description: Deletes a folder.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            DELETE /folders/51si**** HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X DELETE 'https://api.nylas.com/folders/{folder_id}' \
+            -H 'Authorization: Bearer ACCESS_TOKEN' 
+        - lang: py
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+            # Delete folders by specifying the appropriate id
+            nylas.folders.delete('{id}')
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            # Replace {id} to get a specific folder
+            folder = nylas.folders.find('{id}')
+
+            # Delete folder
+            folder.destroy
+        - lang: js
+          label: Node.js SDK
+          source: |-
+            // Delete folders by specifying the appropriate id
+            nylas.folders.delete('{id}');
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasAccount;
+            import com.nylas.NylasClient;
+            import com.nylas.Folders;
+
+            public class NylasExamples {
+                public static void deleteFolderExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasAccount account = nylas.account("{ACCESS_TOKEN}");
+                    Folders folders = account.folders();
+
+                    // Delete folders by specifying the appropriate id
+                    folders.delete("{folder_id}");
+                    }
+            } 
+    parameters:
+      - name: id
+        description: The ID of the folder.
+        schema:
+          type: string
+        in: path
+        required: true
+  /oauth/authorize:
+    get:
+      tags:
+        - Hosted Authentication
+      parameters:
+        - name: client_id
+          description: Your Nylas application's client ID.
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: redirect_uri
+          description: >-
+            The URI to which the user will be redirected once authentication
+            completes. This must match a URI registered in the developer
+            dashboard.
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: response_type
+          description: '`code` for server side, `token` for client side.'
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: scopes
+          description: Any combination of supported authentication scopes.
+          schema:
+            type: string
+          in: query
+          required: true
+        - name: login_hint
+          description: >-
+            The user’s email address, if known. If you don't supply a
+            `login_hint`, the Nylas OAuth flow will prompt the user for an email
+            address to authenticate.
+          schema:
+            type: string
+          in: query
+        - name: state
+          description: >-
+            An optional arbitrary string that is returned as a URL parameter in
+            your redirect URI. You can pass a value here to keep track of a
+            specific user’s authentication flow. This may also be used to
+            protect against [CSRF
+            attacks](https://en.wikipedia.org/wiki/Cross-site_request_forgery).
+            The maximum length of this string is 255 characters.
+          schema:
+            type: string
+          in: query
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    code: string
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+      security:
+        - BASIC_AUTH: []
+      operationId: get-oauth-authorize
+      summary: Authenticate User
+      description: Authenticate user.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: >
+            GET
+            /oauth/authorize?client_id=95fmk77lwy***&response_type=code&scope=email&redirect_uri&state
+            HTTP/1.1
+
+            Host: api.nylas.com
+
+            Authorization: Basic WVVUWj****==
+
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: >-
+            curl -G \
+              --url 'https://api.nylas.com/oauth/authorize' \
+              -H 'Authorization: Basic ENCODED_CLIENT_SECRET' \
+              -d 'client_id=nylas_client_id' \
+              -d 'redirect_uri=http://example.com/nylas_callback' \
+              -d 'response_type=code' \
+              -d 'scopes=email.read_only,calendar.read_only,contacts.read_only' \
+              -d 'login_hint=my_email@example.com' \
+              -d 'state=MyCustomStateString'
+              
+            # After your user authenticates, Nylas will return a unique,
+            one-time-use code.
+
+            # This code can be used to create an access token that grants access
+            to the user account.
+
+            # See: https://docs.nylas.com/reference#oauthtoken
+        - lang: py
+          label: Python SDK
+          source: >-
+            from nylas import APIClient
+
+
+
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET
+            )
+
+            auth_url = nylas.authentication_url(
+                "http://example.com/login_callback", # Required
+                login_hint="your_email@example.com",  # Optional
+                state="unique_identifier",  # Optional
+                scopes='email, calendar, contacts' # Optional - Default is all scopes
+                # A full list of available scopes can be found here:
+                # https://docs.nylas.com/docs/authentication-scopes
+            )
+
+
+            # This is the URL you need to send the user to to authenticate their
+            account.
+
+            print(auth_url)
+
+
+            # After your user authenticates, Nylas will return a unique,
+            one-time-use code.
+
+            # This code can be used to create an access token that grants access
+            to the user account.
+
+            # See: https://docs.nylas.com/reference#oauthtoken
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            use OmniAuth::Builder do
+              provider :google_oauth2, ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'],
+                { name: 'google', access_type: :offline, approval_prompt: "force", prompt: 'consent',
+                  scope: ['email', 'profile', 'https://mail.google.com/',
+                          'https://www.google.com/m8/feeds/',
+                          'calendar'].join(', ') }
+            end
+            get "/" do
+              '<a href="/auth/google">Authenticate a Google Account</a>'
+            end
+
+            get "/auth/failure" do
+              params[:message]
+            end
+        - lang: js
+          label: Node.js SDK
+          source: |-
+            const Nylas = require('nylas');
+
+            Nylas.config({
+              clientId: CLIENT_ID,
+              clientSecret: CLIENT_SECRET,
+            });
+
+            options = {
+              loginHint: 'you_email@example.com',
+              redirectURI: 'https://localhost/callback',
+              scopes: ['email.read_only', 'email.send'],
+            };
+
+            // Redirect your user to the auth_url
+            auth_url = Nylas.urlForAuthentication(options);
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasApplication;
+            import com.nylas.NylasClient;
+            import com.nylas.HostedAuthentication;
+            import com.nylas.Scope;
+
+            public class NylasExamples {
+                public static void hostedAuthExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+
+                    HostedAuthentication authentication = application.hostedAuthentication();
+                    String hostedAuthUrl = authentication.urlBuilder()
+                        .redirectUri("https://example.com/redirect")
+                        .responseType("code") // Use token for client-side apps
+                        .scopes(Scope.EMAIL, Scope.CALENDAR, Scope.CONTACTS)
+                        .loginHint("nyla@nylas.com")
+                        .state("example_csrf_token")
+                        .buildUrl();
+                    
+                    // This is the URL you need to send the user to to authenticate their account.
+                    System.out.println(hostedAuthUrl);
+
+                    // After your user authenticates, Nylas will return a unique, one-time-use code.
+                    // This code can be used to create an access token that grants access to the user account.
+                    // See: https://docs.nylas.com/reference#oauthtoken
+                }
+            }
+  /oauth/token:
+    post:
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              required:
+                - client_id
+                - client_secret
+                - grant_type
+                - code
+              type: object
+              properties:
+                client_id:
+                  description: Your Nylas application's client ID.
+                  type: string
+                client_secret:
+                  description: Your Nylas Developer App client secret.
+                  type: string
+                grant_type:
+                  description: Set to `authorization_code`.
+                  type: string
+                code:
+                  description: The authorization code returned from `/oauth/authorize`.
+                  type: string
+      tags:
+        - Hosted Authentication
+      parameters:
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+      responses:
+        '200':
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+          description: Bad Request
+      security:
+        - BASIC_AUTH: []
+      operationId: post-oauth-token
+      summary: Send Access Token
+      description: Send access token.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            POST /oauth/token HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUW****
+            cache-control: no-cache
+            {
+                "client_id": "CLIENT_ID",
+                "client_secret": "CLIENT_SECRET",
+                "grant_type": "authorization_code",
+                "code": "AUTHORIZATION_CODE"
+            }------WebKitFormBoundary7MA4YWxkTrZu0gW--
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X POST \
+              https://api.nylas.com/oauth/token \
+              -H 'Authorization: Basic ENCODED_CLIENT_SECRET' \
+              -d '{
+                "client_id": "CLIENT_ID",
+                "client_secret": "CLIENT_SECRET",
+                "grant_type": "authorization_code",
+                "code": "AUTHORIZATION_CODE"
+            }'
+        - lang: py
+          label: Python SDK
+          source: >-
+            from nylas import APIClient
+
+
+            # Create a client that has access to your Nylas app.
+
+            nylas_app = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET
+            )
+
+
+            # Get an access token that grants access to user data and
+            functionality.
+
+            # You need to generate a one-time-use code via Nylas to pass to this
+            function.
+
+            # See: https://docs.nylas.com/reference#oauthauthorize
+
+            ACCESS_TOKEN = nylas_app.token_for_code('{code_from_nylas}')
+
+
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+
+            # Now you have a Nylas client object that has access to user data
+            and functionality
+
+            print(nylas.account)
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            nylas_token = api.authenticate(
+              name: auth_hash[:info][:name],
+              email_address: auth_hash[:info][:email],
+              provider: :gmail,
+              settings: { 
+                google_client_id: ENV['GOOGLE_CLIENT_ID'],
+                google_client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+                google_refresh_token: auth_hash[:credentials][:refresh_token] 
+              }
+            )
+        - lang: js
+          label: Node.js SDK
+          source: >-
+            const Nylas = require('nylas');
+
+
+            // Pass credentials to the Nylas client to manage authentication
+
+            Nylas.config({
+
+            clientId: CLIENT_ID,
+
+            clientSecret: CLIENT_SECRET,
+
+            });
+
+
+            // Get an access token that grants access to user data and
+            functionality.
+
+            // You need to generate a one-time-use code via Nylas to pass to
+            this function.
+
+            // See: https://docs.nylas.com/reference#oauthauthorize
+
+            let access_token;
+
+            Nylas.exchangeCodeForToken(NYLAS_CODE).then(resp => access_token =
+            resp.access_token);
+
+
+            // Pass access_token to the Nylas client
+
+            const nylas = Nylas.with(access_token);
+
+
+            // Now your Nylas client object has access to user data and
+            functionality
+
+            nylas.calendars.list();
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasApplication;
+            import com.nylas.NylasClient;
+            import com.nylas.NylasAccount;
+            import com.nylas.HostedAuthentication;
+
+            public class NylasExamples {
+                public static void hostedTokenExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+
+                    // Create a client that has access to your Nylas app.
+                    NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                    HostedAuthentication authentication = application.hostedAuthentication();
+
+                    // Get an access token that grants access to user data and functionality.
+                    // You need to generate a one-time-use code via Nylas to pass to this function.
+                    // See: https://docs.nylas.com/reference#oauthauthorize
+                    String accessToken = authentication.fetchToken("{code}").getAccessToken();
+
+                    // Now you have a Nylas client object that has access to user data and functionality
+                    NylasAccount account = nylas.account(accessToken);
+                }        
+            }
+  /oauth/revoke:
+    post:
+      tags:
+        - Hosted Authentication
+      parameters:
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+      responses:
+        '200':
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+          description: Bad Request
+      security:
+        - BASIC_AUTH: []
+      operationId: post-oauth-revoke
+      summary: Revoke Access Tokens
+      description: >-
+        Revoke access tokens.
+
+
+        Include the to-be-revoked access token as the HTTP Basic Auth username.
+
+
+        A 200 status code response with a body of `{ "success": True }`
+        signifies that the token has been successfully revoked and can no longer
+        be used.
+
+
+        If needed, you can also revoke all active access tokens by using the
+        Account Management endpoints.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            POST /oauth/revoke HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic WVVUW****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: >-
+            curl -X POST https://api.nylas.com/oauth/revoke --user
+            ACCESS_TOKEN_TO_REVOKE:
+        - lang: py
+          label: Python SDK
+          source: >-
+            from nylas import APIClient
+
+
+            # Pass the access token to the Nylas client to manage the account's
+            tokens
+
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+
+            # Revoke the access token that was passed to the Nylas client.
+
+            nylas.revoke_token()
+
+
+            # Revoke all access tokens for the user account.
+
+            nylas.revoke_all_tokens()
+
+
+            # You can also revoke all tokens except for one.
+
+            nylas.revoke_all_tokens(keep_access_token='{ACCESS_TOKEN}')
+        - lang: ruby
+          label: Ruby SDK
+          source: >-
+            # Revoke the nylas access token so it cannot be used in the future
+            (you probably don't want to do this
+
+            # unless people deactivate their account with your software)
+
+            api.revoke(nylas_token)
+        - lang: js
+          label: Node.js SDK
+          source: |-
+            const Nylas = require('nylas');
+
+            // Pass credentials to the Nylas client to manage authentication
+            Nylas.config({
+            clientId: CLIENT_ID,
+            clientSecret: CLIENT_SECRET,
+            });
+
+            // Get the user account
+            let account;
+            Nylas.accounts.find(ACCOUNT_ID).then(resp => account = resp);
+
+            // Revoke all access tokens for the user account.
+            account.revokeAll();
+
+            // You can also revoke all tokens except for one.
+            nylas.revokeAll(ACCESS_TOKEN);
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasApplication;
+            import com.nylas.NylasClient;
+            import com.nylas.Accounts;
+
+            public class NylasExamples {
+                public static void revokeTokensExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                    Accounts accounts = application.accounts();
+
+                    // Revoke all tokens for an account by providing its ID
+                    accounts.revokeAllTokensForAccount("{accountId}", null);
+
+                    // Pass an optional access token to revoke all tokens except for one.
+                    accounts.revokeAllTokensForAccount("{accountId}", "{ACCESS_TOKEN}");
+                    }
+            }
+  /connect/authorize:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Native-Auth-Post'
+      tags:
+        - Native Authentication
+      parameters:
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+          required: true
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    code: one-time-use-code
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-1:
+                  value:
+                    message: Please include the missing fields
+                    type: auth_error
+                    missing_fields:
+                      - provider
+                    error: Missing fields.
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-1:
+                  value:
+                    message: Please include the missing fields
+                    type: auth_error
+                    missing_fields:
+                      - provider
+                    error: Missing fields.
+          description: Forbidden
+      operationId: post-connect-authorize
+      summary: Send Authorization
+      description: >
+        This endpoint is where your application sends mailbox credentials to
+        verify they are correct. This begins the connection process.
+
+
+        A successful authentication will return your application a JSON encoded
+        body with a single code parameter. In the next step, your server backend
+        should exchange this code for an access token, which can then be used to
+        make API requests.
+
+
+        **Notice about POSTing to /connect/authorize**
+
+
+        We recommend that you POST these values directly to api.nylas.com using
+        AJAX from your web application. By sending these directly, your app will
+        never be required to manipulate or store passwords for a user's mailbox.
+        (You don't even want to take the chance of logging these by accident!)
+      x-code-samples:
+        - lang: bash
+          label: cURL
+          source: >-
+            # The following examples will return a one-time-use code.
+
+            # This code can be exchanged for an account access token that grants
+            full access to user account functionality.
+
+
+            # Authenticate Google Accounts
+
+            curl -X POST https://api.nylas.com/connect/authorize -d '{ 
+                "client_id": "nylas_client_id",
+                "name": "Nyla the Cheetah",
+                "email_address": "nyla@nylas.com",
+                "provider": "gmail",
+                "settings": {
+                    "google_client_id": "{google_api_client_id}",
+                    "google_client_secret": "{geoogle_api_client_secret}",
+                    "google_refresh_token": "{google_api_refresh_token}"
+                },
+                "scopes": "email.read_only,calendar.read_only,contacts.read_only"
+            }'
+
+
+            # Authenticate Google Account using a Service Account
+
+            curl -X POST https://api.nylas.com/connect/authorize -d '{
+                "client_id": "nylas_client_id",
+                "name": "Nyla the Cheetah",
+                "email_address": "nyla@gmail.com", # Account to be authenticated
+                "provider": "gmail",
+                "settings": {
+                    "service_account_json": { # Service account credentials
+                    "type": "service_account",
+                    "project_id": "my-google-app-123456",
+                    "private_key_id": "68915b4e55baac9191dd32e0be784687c6873b14",
+                    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIE....fZ1F8=\n-----END PRIVATE KEY-----\n",
+                    "client_email": "test-service-account@my-google-app-123456.iam.gserviceaccount.com",
+                    "client_id": "10569134234239528168761",
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/test-service-account%40my-google-app-123456.iam.gserviceaccount.com"
+                }
+                "scopes": "calendar"
+            }'
+
+
+            # Authenticate Office365 Accounts
+
+            curl -X POST https://api.nylas.com/connect/authorize -d '{ 
+                "client_id": "nylas_client_id",
+                "name": "Nyla the Cheetah",
+                "email_address": "nyla@nylas.com",
+                "provider": "office365",
+                "settings":{
+                    "microsoft_client_id":     "{microsoft_client_id}",
+                    "microsoft_client_secret": "{microsoft_client_secret}",
+                    "microsoft_refresh_token": "{microsoft_refresh_token}",
+                    "redirect_uri":            "https://example.com/redirect", # Redirect URI that the was originally used to get the refresh token        
+                },
+                "scopes": "email.read_only,calendar.read_only,contacts.read_only"
+            }'
+
+
+            # Authenticate Exchange Accounts
+
+            curl -X POST https://api.nylas.com/connect/authorize -d '{
+                "client_id": "nylas_client_id",
+                "name": "Nyla the Cheetah",
+                "email_address": "nyla@nylas.com",
+                "provider": "exchange",
+                "settings": {
+                    "username": "nyla@nylas.com",
+                    "password": "MakeEmailSuckLess",
+                    "exchange_server_host": "exchange.nylas.com"
+                },
+                "scopes": "email.read_only,calendar.read_only,contacts.read_only"
+            }'
+
+
+            # Authenticate Exchange Account using a Service Account via Password
+
+            curl -X POST https://api.nylas.com/connect/authorize -d '{
+                "client_id": "nylas_client_id",
+                "name": "Nyla the Cheetah",
+                "email_address": "nyla@nylas.com", # Account to authenticate
+                "provider": "exchange",
+                "settings": {
+                    "username": "username", # Service account username
+                    "password": "password", # Service account password
+                    "service_account": true
+                }
+                "scopes": "calendar.read_only"
+            }'
+
+
+            # Authenticate Exchange Account using a Service Account via OAuth
+
+            curl -X POST https://api.nylas.com/connect/authorize -d '{ 
+                "client_id":     "nylas_client_id",
+                "name":          "Nyla the Cheetah",
+                "email_address": "nyla@nylas.com",   # Account to authenticate
+                "provider":      "exchange",
+                "settings": {
+                    "microsoft_client_id":     "{microsoft_client_id}",
+                    "microsoft_client_secret": "{microsoft_client_secret}",
+                    "microsoft_refresh_token": "{microsoft_refresh_token}", # Service account refresh token!
+                    "redirect_uri":            "https://example.com/redirect",
+                    "service_account": true
+                },
+                "scopes": "calendar"
+            }'
+
+
+            # Authenticate Outlook Accounts
+
+            curl -X POST https://api.nylas.com/connect/authorize -d '{
+                "client_id": "nylas_client_id",
+                "name": "Nyla the Cheetah",
+                "email_address": "nyla@outlook.com",
+                "provider": "outlook",
+                "settings": {
+                    "username": "nyla@outlook.com",
+                    "password": "MakeEmailSuckLess",
+                    "exchange_server_host": "eas.outlook.com"
+                },
+                "scopes": "email.read_only,calendar.read_only,contacts.read_only"
+            }'
+
+
+            # Authenticate known IMAP providers
+
+            curl -X POST https://api.nylas.com/connect/authorize -d '{
+                "client_id": "nylas_client_id",
+                "name": "Nyla the Cheetah",
+                "email_address": "nyla@aol.com",
+                "provider": "aol",
+                "settings": {
+                    "password": "MakeEmailSuckLess"
+                },
+                "scopes": "email.read_only,calendar.read_only,contacts.read_only"
+            }'
+
+
+            # Authenticate a generic IMAP provider
+
+            curl -X POST https://api.nylas.com/connect/authorize -d '{
+                "client_id": "nylas_client_id",
+                "name": "Nyla the Cheetah",
+                "email_address": "nyla@nylas.com",
+                "provider": "imap",
+                "settings": {
+                    "imap_host": "imap.nylas.com",
+                    "imap_port": 993,
+                    "imap_username": "nyla",
+                    "imap_password": "MakeEmailSuckLess",
+                    "smtp_host": "smtp.nylas.net",
+                    "smtp_port": 587,
+                    "smtp_username": "nyla",
+                    "smtp_password": "MakeEmailSuckLess",
+                    "ssl_required": true
+                },
+                "scopes": "email.read_only,calendar.read_only,contacts.read_only"
+            }'
+        - lang: py
+          label: Python SDK
+          source: >-
+            from nylas import APIClient
+
+            import requests
+
+
+            # Create a client that has access to your Nylas app.
+
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET
+            )
+
+
+            # Authenticate Gmail Accounts
+
+            gmail_authentication = {
+                # Example: https://github.com/nylas/nylas-python/tree/master/examples/native-authentication-gmail
+                "client_id": CLIENT_ID,
+                "name":          "Nyla The Cheetah",
+                "email_address": "nyla@nylas.com",
+                "provider":      "gmail",
+                "settings":      {  # See the Example above to learn more about these values
+                  "google_client_id":     "{google_api_client_id}",
+                  "google_client_secret": "{google_api_client_secret}",
+                  "google_refresh_token": "{google_api_refresh_token}"
+                },
+                "scopes": "email,calendar,contacts"
+            }
+
+
+            # Post the authentication payload to Nylas.
+
+            nylas_authorization = requests.post(
+                    "https://api.nylas.com/connect/authorize", json=gmail_authentication
+            )
+
+
+            # This code can be exchanged for an account access token
+
+            nylas_code = nylas_authorization.json()["code"]
+
+
+            # -------------------------------------------
+
+            # The remainder contains examples of how to authenticate other types
+            of accounts
+
+
+            # Authenticate Exchange Accounts
+
+            exchange_authentication = {
+                # Example: https://github.com/nylas/nylas-python/tree/master/examples/native-authentication-exchange
+                "client_id": CLIENT_ID,
+                "name":          "Nyla The Cheetah",
+                "email_address": "nyla@nylas.com",
+                "provider":      "exchange",
+                "settings": {
+                    "username": "nyla@exchange_server.com",
+                    "password": "MakeEmailSuckLess",
+                    "eas_server_host": "exchange.your_server.com"
+                },
+                "scopes": "email,calendar,contacts"
+            }
+
+
+            # Authenticate an Outlook Account
+
+            outlook_authentication = {
+                "client_id": CLIENT_ID,
+                "name":          "Nyla The Cheetah",
+                "email_address": "nyla@outlook.com",
+                "provider": "outlook",
+                "settings": { # Uses the same format as Exchange Servers
+                    "username": "nyla@outlook.com",
+                    "password": "MakeEmailSuckLess",
+                    "eas_server_host": "outlook.com"
+
+                },
+                "scopes": "email,calendar,contacts"
+            }
+
+
+            # Authenticate an account from a known IMAP provider
+
+            known_imap_authentication = {
+                "client_id": CLIENT_ID,
+                "name":          "Nyla The Cheetah",
+                "email_address": "nyla@yahoo.com",
+                "provider": "yahoo",  # can also be aol, icloud, or hotmail
+                "settings": {
+                    "password": "MakeEmailSuckLess"
+                },
+                "scopes": "email,calendar,contacts"
+            }
+
+
+            # Authenticate any other IMAP account
+
+            generic_imap_authentication = {
+                "client_id": CLIENT_ID,
+                "name": "Nyla The Cheetah",
+                "email_address": "nyla@nylas.com",
+                "provider": "imap",
+                "settings":      {
+                    "imap_host":     "imap.nylas.com",
+                    "imap_port":     12345,
+                    "imap_username": "nyla",
+                    "imap_password": "MakeEmailSuckLess",
+                    "smtp_host":     "smtp.nylas.net",
+                    "smtp_port":     12346,
+                    "smtp_username": "nyla",
+                    "smtp_password": "MakeEmailSuckLess",
+                    "ssl_required":  'true'
+                },
+                "scopes": "email,calendar,contacts"
+            }
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            nylas_token = api.authenticate(
+              name: auth_hash[:info][:name], 
+              email_address: auth_hash[:info][:email],
+              provider: :gmail,
+              settings: {
+                google_client_id: ENV['GOOGLE_CLIENT_ID'],
+                google_client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+                google_refresh_token: auth_hash[:credentials][:refresh_token] 
+              }
+            )
+        - lang: js
+          label: Node.js SDK
+          source: "// The following examples will return a Promise, which resolves to a one-time-use code.\n// This code can be exchanged for an account access token that grants full access to user account functionality.\n\nconst Nylas = require('nylas');\n\nNylas.config({\n  clientId: CLIENT_ID,\n  clientSecret: CLIENT_SECRET,\n});\n\n// Authenticate Google Accounts\nNylas.connect.authorize({\n  name: 'Nyla The Cheetah',\n  email_address: 'nyla@gmail.com',\n  provider: 'gmail',\n  settings: {\n    google_client_id: '{google_api_client_id}',\n    google_client_secret: '{google_api_client_secret}',\n    google_refresh_token: '{google_api_refresh_token}',\n  },\n  scopes: 'email.read_only,calendar.read_only,contacts.read_only'\n});\n\n// Authenticate Office365 Accounts\nNylas.connect.authorize({\n  name: 'Nyla The Cheetah',\n  email_address: 'nyla@nylas.com',\n  provider: 'office365',\n  settings: {\n    microsoft_client_id: '{microsoft_client_id}',\n    microsoft_client_secret: '{microsoft_client_secret}',\n    microsoft_refresh_token: '{microsoft_refresh_token}',\n    redirect_uri: 'https://example.com/redirect', // Redirect URI that the was originally used to get the refresh token\n  },\n  scopes: 'email.read_only,calendar.read_only,contacts.read_only'\n});\n\n// Authenticate Exchange Accounts\nNylas.connect.authorize({\n  name: 'Nyla The Cheetah',\n  email_address: 'nyla@nylas.com',\n  provider: 'exchange',\n  settings: {\n    username: 'nyla@nylas.com',\n    password: 'MakeEmailSuckLess'\n  },\n  scopes: 'email.read_only,calendar.read_only,contacts.read_only'\n});\n\n// Authenticate Outlook Accounts\nNylas.connect.authorize({\n  name: 'Nyla The Cheetah',\n  email_address: 'nyla@outlook.com',\n  provider: 'outlook',\n  settings: {\n    username: 'nyla@outlook.com',\n    password: 'MakeEmailSuckLess',\n    eas_server_host: \"outlook.com\"\n  },\n  scopes: 'email.read_only,calendar.read_only,contacts.read_only'\n});\n\n// Authenticate known IMAP providers\nNylas.connect.authorize({\n  name: 'Nyla The Cheetah',\n  email_address: 'nyla@aol.com',\n  provider: 'aol',\n  settings: {\n  \tpassword: 'MakeEmailSuckLess',\n  },\n  scopes: 'email.read_only,calendar.read_only,contacts.read_only'\n});\n\n// Authenticate a generic IMAP provider\nNylas.connect.authorize({\n  name: 'Nyla The Cheetah',\n  email_address: 'nyla@nylas.com',\n  provider: 'imap',\n  settings: {\n    imap_host: 'imap.nylas.com',\n    imap_port: 993,\n    imap_username: 'nyla',\n    imap_password: 'MakeEmailSuckLess',\n    smtp_host: 'smtp.nylas.com',\n    smtp_port: 465,\n    smtp_username: 'nyla',\n    smtp_password: 'MakeEmailSuckLess',\n    ssl_required: true\n  },\n  scopes: 'email.read_only,calendar.read_only,contacts.read_only'\n});"
+        - lang: java
+          label: Java SDK
+          source: "import java.io.IOException;\nimport com.nylas.RequestFailedException;\nimport com.nylas.NylasApplication;\nimport com.nylas.NylasClient;\nimport com.nylas.Scope;\nimport com.nylas.NativeAuthentication;\nimport com.nylas.NativeAuthentication.AuthRequestBuilder;\n\nimport com.nylas.GoogleProviderSettings;\nimport com.nylas.ImapProviderSettings;\n\n\npublic class NylasExamples {\n    public static void nativeAuthExample() throws IOException, RequestFailedException {\n        NylasClient nylas = new NylasClient();\n        NylasApplication application = nylas.application(\"{CLIENT_ID}\", \"{CLIENT_SECRET}\");\n        NativeAuthentication authentication = application.nativeAuthentication();\n\n        ImapProviderSettings settings = new ImapProviderSettings()\n            .imapHost(\"imap.nylas.com\")\n            .imapPort(1234)\n            .imapUsername(\"nyla\")\n            .imapPassword(\"MakeEmailSuckLess\")\n            .smtpHost(\"smtp.nylas.com\")\n            .smtpPort(2345)\n            .smtpUsername(\"nyla\")\n            .smtpPassword(\"MakeEmailSuckLess\")\n            .sslRequired(true)\n            ;\n\n        AuthRequestBuilder authRequest = authentication.authRequest()\n            .name(\"Nyla The Cheetah\")\n            .emailAddress(\"nyla@nylas.com\")\n            .providerSettings(settings)\n            .scopes(Scope.EMAIL, Scope.CALENDAR, Scope.CONTACTS);\n                                \n        System.out.println(\"Making a native authentication request.\");\n        String authorizationCode = authRequest.execute();\n        System.out.println(\"Success! Authorization code: \" + authorizationCode);\n\n\t\t\t\t// --------------------------------------------------------\n        // The remainder contains examples of how to authenticate other types of accounts\n        \n        // Authenticate Google Accounts\n        GoogleProviderSettings googleSettings = new GoogleProviderSettings()\n            .googleClientId(\"google.api.client.id\")\n            .googleClientSecret(\"google.api.client.secret\")\n            .googleRefreshToken(\"google.refresh.token\")\n            ;\n\n        ProviderSettings office365Auth = new MicrosoftOffice365ProviderSettings()\n                .microsoftClientId(\"{MS_CLIENT_ID}\")\n                .microsoftClientSecret(\"{MS_CLIENT_SECRET}\")\n                .microsoftRefreshToken(\"{MS_REFRESH_TOKEN}\")\n                .redirectUri(\"example.com/nylas-redirect\")\n                ;\n        \n        ProviderSettings exchangeAuth = new MicrosoftExchangeProviderSettings()\n                .username(\"nyla@exchange_server.com\")\n                .password(\"MakeEmailSuckLess\")\n                .easServerHost(\"exchange.your_server.com\")\n                ;\n        \n        ProviderSettings knownImapAuth = new KnownImapProviderSettings(\n                \"yahoo\")\n                .password(\"MakeEmailSuckLess\")\n                ;\n    }\n}"
+  /account:
+    get:
+      tags:
+        - Accounts
+      parameters:
+        - name: Accept
+          schema:
+            default: application/json
+            type: string
+          in: header
+          required: true
+        - name: Content-Type
+          schema:
+            default: application/json
+            type: string
+          in: header
+          required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account-Get'
+              examples:
+                example-1:
+                  value:
+                    id: awa6ltos76vz5hvphkp8k17nt
+                    object: account
+                    account_id: awa6ltos76vz5hvphkp8k17nt
+                    name: Dorothy Vaughan
+                    provider: gmail
+                    organization_unit: label
+                    sync_state: running
+                    linked_at: 1470231381
+                    email_address: dorothy@spacetech.com
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+          description: Bad Request
+      security:
+        - ACCESS_TOKEN: []
+      operationId: get-account
+      summary: Return an Account
+      description: Returns account details.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |
+            GET /account HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Bearer ACCESS_TOKEN
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X GET \
+              https://api.nylas.com/account \
+              -H 'Authorization: Bearer ACCESS_TOKEN' \
+              -H 'Content-Type: application/json' \
+              -H 'cache-control: no-cache'
+        - lang: py
+          label: Python SDK
+          source: |-
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+            account = nylas.account
+
+            # The following attributes are available for the Account object
+            account.id
+            account.account_id
+            account.object
+            account.name
+            account.email_address
+            account.provider
+            account.organization_unit
+            account.sync_state
+            account.linked_at
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            nylas = Nylas::API.new(
+                app_id: APP_ID,
+                app_secret: APP_SECRET,
+                access_token: ACCESS_TOKEN
+            )
+
+            account = nylas.current_account
+
+            # The following attributes are available for the Account object
+            account.id
+            account.account_id
+            account.object
+            account.name
+            account.email_address
+            account.provider
+            account.organization_unit
+            account.sync_state
+            account.linked_at
+        - lang: js
+          label: Node.js SDK
+          source: |-
+            nylas.account.get().then(account => console.log(account));
+
+            // The following attributes are available for the Account object
+            account.id
+            account.accountId
+            account.object
+            account.name
+            account.emailAddress
+            account.provider
+            account.organizationUnit
+            account.syncState
+            account.linkedAt
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.AccountDetail;
+            import com.nylas.NylasClient;
+
+            public class DocExamples {
+                public static void getAccountExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    AccountDetail account = nylas.account("{ACCESS_TOKEN}").fetchAccountByAccessToken();
+                    
+                    // The following attributes are available for the account object
+                    account.getId();
+                    account.getName();
+                    account.getEmailAddress();
+                    account.getProvider();
+                    account.getOrganizationUnit();
+                    account.getSyncState();
+                    account.getLinkedAt();
+                    }
+            }
+  /connect/token:
+    post:
+      summary: Exchange the Token
+      tags:
+        - Native Authentication
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Native-Auth-Token'
+              examples:
+                example-1:
+                  value:
+                    access_token: token
+                    account_id: account-id
+                    billing_state: paid
+                    email_address: nyla@nylas.com
+                    id: id
+                    linked_at: 1563496685
+                    name: Nyla The Cheeta
+                    object: account
+                    organization_unit: label
+                    provider: google
+                    sync_state: running
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+      operationId: post-connect-token
+      description: >-
+        This endpoint is where your application exchanges the code received from
+        `/connect/authorize` and receives an access token. This associates the
+        mailbox with your Nylas Cloud app.
+
+
+        A successful response from this will be an account object with an
+        access_token attribute. Once you’ve obtained a token, you include it
+        with Nylas API requests as the HTTP Basic Auth Username.
+
+
+        You can remove this account from your Nylas Cloud app in the Nylas API
+        console.
+
+
+        > **Never send your client secret to a browser!**
+
+        This request should be made from your server. It's important that you
+        never send your client secret to a browser. In order to do this, your
+        browser JavaScript code should securely send the received code in the
+        previous step to your web app, which in turn makes the request to
+        `/connect/token`.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |-
+            POST /connect/token HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            cache-control: no-cache
+            {
+                "client_id": "95fm****",
+                "client_secret": "5s827****",
+                "code": "fZztR****"
+            }
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X POST "https://api.nylas.com/connect/token" -d '{
+              "client_id": "{client-id}",
+              "client_secret": "{client-secret}",
+              "code": "{nylas_code}"
+            }'
+        - lang: py
+          label: Python SDK
+          source: >-
+            from nylas import APIClient
+
+
+            # Create a client that has access to your Nylas app.
+
+            nylas_app = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET
+            )
+
+
+            # Get an access token that grants access to user data and
+            functionality.
+
+            # You need to generate a one-time-use code via Nylas to pass to this
+            function.
+
+            # See: https://docs.nylas.com/reference#connectauthorize
+
+            ACCESS_TOKEN = nylas_app.token_for_code('{code_from_nylas}')
+
+
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET,
+                ACCESS_TOKEN
+            )
+
+
+            # Now you have a Nylas client object that has access to user data
+            and functionality
+
+            print(nylas.account)
+        - lang: ruby
+          label: Ruby SDK
+          source: "auth_hash = env['omniauth.auth']\n\nnylas_token = api.authenticate(name: auth_hash[:info][:name], \n  \temail_address: auth_hash[:info][:email], \n    provider: :gmail, settings:\n    { \n      google_client_id: ENV['GOOGLE_CLIENT_ID'],\n      google_client_secret: ENV['GOOGLE_CLIENT_SECRET'],\n      google_refresh_token: auth_hash[:credentials][:refresh_token] })\n\napi_as_user = api.as(nylas_token)"
+        - lang: js
+          label: Node.js SDK
+          source: >-
+            // The following examples will return a Promise, which resolves to a
+            Nylas account, complete with account id and access token.
+
+            // This access token grants full access to user account
+            functionality.
+
+
+            const Nylas = require('nylas');
+
+
+            Nylas.config({
+              clientId: CLIENT_ID,
+              clientSecret: CLIENT_SECRET,
+            });
+
+
+            // First, you need to generate a one-time-use code via Nylas
+
+            // See: https://docs.nylas.com/reference#connectauthorize
+
+            let access_code;
+
+
+            Nylas.connect.authorize({
+              name: 'Nyla The Cheetah',
+              email_address: 'nyla@gmail.com',
+              provider: 'gmail',
+              settings: {
+                google_client_id: '{google_api_client_id}',
+                google_client_secret: '{google_api_client_secret}',
+                google_refresh_token: '{google_api_refresh_token}',
+              },
+              scopes: 'email.read_only,calendar.read_only,contacts.read_only'
+            }).then(resp => access_code = resp.code);
+
+
+            // Use this code to connect the account to your Nylas Application
+
+            let account;
+
+            Nylas.connect.token(access_code).then(resp => account = resp);
+
+
+            // Use the account's access token to get a Nylas client with access
+            to the account's data and functionality
+
+            const nylas = Nylas.with(account.access_token);
+
+            nylas.calendars.list().then(resp => console.log(resp));
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasApplication;
+            import com.nylas.NylasClient;
+            import com.nylas.NylasAccount;
+            import com.nylas.NativeAuthentication;
+
+
+            public class NylasExamples {
+                public static void nativeTokenExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    // Create a client that has access to your Nylas app.
+                    NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                    NativeAuthentication authentication = application.nativeAuthentication();
+
+                    // Get an access token that grants access to user data and functionality.
+                    // You need to generate a one-time-use code via Nylas to pass to this function.
+                    // See: https://docs.nylas.com/reference#connectauthorize
+                    String accessToken = authentication.fetchToken("{code}").getAccessToken();
+
+                    // Now you have a Nylas client object that has access to user data and functionality
+                    NylasAccount account = nylas.account(accessToken);
+                }
+            }
+      parameters:
+        - schema:
+            type: string
+            default: application/json
+          in: header
+          name: Content-Type
+          required: true
+        - schema:
+            type: string
+            default: application/json
+          in: header
+          name: Accept
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                client_id:
+                  type: string
+                  description: Your client ID from the Nylas Developer console.
+                client_secret:
+                  type: string
+                  description: Your client secret from the Nylas Developer console.
+                code:
+                  type: string
+                  description: The value returned from calling `/connect/authorize`.
+              required:
+                - client_id
+                - client_secret
+                - code
+  '/a/{client_id}/accounts':
+    get:
+      summary: Return All Accounts
+      tags:
+        - Account Management
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account-Return-All'
+              examples:
+                example-1:
+                  value:
+                    - account_id: 622x1k5v1ujh55t6ucel7av4
+                      billing_state: free
+                      email: example@example.com
+                      id: 622x1k5v1ujh55t6ucel7av4
+                      provider: yahoo
+                      sync_state: running
+                      trial: false
+                    - account_id: 123rvgm1iccsgnjj7nn6jwu1
+                      billing_state: paid
+                      email: example@example.com
+                      id: 123rvgm1iccsgnjj7nn6jwu1
+                      provider: gmail
+                      sync_state: running
+                      trial: false
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+      operationId: get-a-client_id-accounts
+      description: >-
+        Returns a list of all accounts.
+
+
+        > The Account Management API can send a request for all accounts with
+        only the client ID and secret passed to it (unlike the account API,
+        which requires an account access token).
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |-
+            GET /a/95fm****/accounts/ HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic e3tj****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X GET \
+            https://api.nylas.com/a/{client_id}/accounts/ \
+          '-H ''Authorization': Basic ENCODED_SECRET'
+        - lang: py
+          label: Python SDK
+          source: >-
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET
+            )
+
+
+            # Return a list of dictionary objects that represent all accounts
+            connected to an app
+
+            accounts = nylas.accounts.all()
+
+
+            # Return an account specified by a specific id
+
+            account = nylas.accounts.get('{id}')
+
+
+            # Return the first account
+
+            account = nylas.accounts.first()
+
+
+            # The following attributes are available for the account object
+
+            account.email
+
+            account.id
+
+            account.sync_state
+
+            account.billing_state
+
+            account.trial
+        - lang: ruby
+          label: Ruby SDK
+          source: >-
+            nylas = Nylas::API.new(
+                app_id: CLIENT_ID,
+                app_secret: CLIENT_SECRET
+            )
+
+
+            # Return a list of dictionary objects that represent all accounts
+            connected to an app
+
+            accounts = nylas.accounts
+
+
+            # Return an account specified by a specific id
+
+            account = nylas.accounts.find('{id}')
+
+
+            # Return the first account
+
+            account = nylas.accounts.first
+
+
+            # The following attributes are available for the account object
+
+            account.email
+
+            account.id
+
+            account.sync_state
+
+            account.billing_state
+
+            account.trial
+        - lang: JS
+          label: Node.js SDK
+          source: >-
+            const Nylas = require('nylas');
+
+            Nylas.config({clientId: 'clientId', clientSecret: 'clientSecret'});
+
+
+            Nylas.accounts.list().then(accounts => console.log(accounts));
+
+
+            // Get an account specified by a specific id
+
+            Nylas.accounts.find('accountId').then(account =>
+            console.log(account));
+
+
+            // Get the first account
+
+            Nylas.accounts.first().then(account => console.log(account));
+
+
+            // The following attributes are available for the Account object
+
+            account.id
+
+            account.accountId
+
+            account.billingState
+
+            account.emailAddress
+
+            account.provider
+
+            account.syncState
+
+            account.trial
+
+            account.clientId
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasApplication;
+            import com.nylas.NylasClient;
+            import com.nylas.Account;
+            import com.nylas.Accounts;
+
+            public class NylasExamples {
+                public static void getAccountsExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                    Accounts accounts = application.accounts();
+                    
+                    // Return all accounts connected to your Nylas app
+                    accounts.list();
+
+                    // Return an account by specifying its ID
+                    Account account = accounts.get("{accountId}");
+                    
+                    // The following attributes are available for the account object
+                    account.getBillingState();
+                    account.getEmail();
+                    account.getProvider();
+                    account.getSyncState();
+                    account.getTrial();
+                    }
+            }
+      security:
+        - ACCESS_TOKEN: []
+      parameters:
+        - schema:
+            type: string
+            default: appliacation/json
+          in: header
+          name: Accept
+          required: true
+        - schema:
+            type: string
+            default: application/json
+          in: header
+          name: Content-Type
+          required: true
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          description: >-
+            The number of objects to return. Defaults to 100. If set too high,
+            requests may fail to prevent excessively large response bodies.
+          name: limit
+        - schema:
+            type: string
+          in: query
+          name: offset
+          description: >-
+            Zero-based offset from default object sorting. See
+            [pagination](#link) for more information.
+    parameters:
+      - schema:
+          type: string
+        name: client_id
+        in: path
+        required: true
+        description: The client ID of your Nylas developer application.
+  '/a/{client_id}/accounts/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: client_id
+        in: path
+        required: true
+        description: The ID of your Nylas developer application.
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: The ID of the account.
+    get:
+      summary: Return a Account
+      tags:
+        - Account Management
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account-Return-All'
+              examples:
+                example-1:
+                  value:
+                    account_id: 123rvgm1iccsgnjj7nn6jwu1
+                    billing_state: paid
+                    email: example@example.com
+                    id: 123rvgm1iccsgnjj7nn6jwu1
+                    provider: gmail
+                    sync_state: running
+                    trial: false
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error-400'
+      operationId: get-a-client_id-accounts-id
+      description: Returns details from a single account.
+      x-code-samples:
+        - lang: HTTP
+          label: HTTP
+          source: |-
+            GET /a/95fm****/accounts/43jf3**** HTTP/1.1
+            Host: api.nylas.com
+            Content-Type: application/json
+            Authorization: Basic e3tjb****
+            cache-control: no-cache
+        - lang: bash
+          label: cURL
+          source: |-
+            curl -X GET \
+            https://api.nylas.com/a/{client_id}/accounts/{id} \
+            -H 'Authorization: Basic ENCODED_SECRET'
+        - lang: python
+          label: Python SDK
+          source: |-
+            from nylas import APIClient
+            nylas = APIClient(
+                CLIENT_ID,
+                CLIENT_SECRET
+            )
+
+            # Return an account specified by a specific id
+            account = nylas.accounts.get('{id}')
+
+            # Return the first account
+            account = nylas.accounts.first()
+
+            # The following attributes are available for the account object
+            account.email
+            account.id
+            account.sync_state
+            account.billing_state
+            account.trial
+        - lang: ruby
+          label: Ruby SDK
+          source: |-
+            nylas = Nylas::API.new(
+            app_id: APP_ID,
+            app_secret: APP_SECRET
+             )
+        - lang: js
+          label: Node.js SDK
+          source: >-
+            const Nylas = require('nylas');
+
+            Nylas.config({clientId: 'clientId', clientSecret: 'clientSecret'})
+
+
+            // Get an account specified by a specific id
+
+            Nylas.accounts.find('accountId').then(account =>
+            console.log(account));
+
+
+            // Get the first account
+
+            Nylas.accounts.first().then(account => console.log(account));
+
+
+            // The following attributes are available for the Account object
+
+            account.id
+
+            account.accountId
+
+            account.billingState
+
+            account.emailAddress
+
+            account.provider
+
+            account.syncState
+
+            account.trial
+
+            account.clientId
+        - lang: java
+          label: Java SDK
+          source: |-
+            import java.io.IOException;
+            import com.nylas.RequestFailedException;
+            import com.nylas.NylasApplication;
+            import com.nylas.NylasClient;
+
+            import com.nylas.Account;
+            import com.nylas.Accounts;
+
+            public class NylasExamples {
+                public static void getAccountExample() throws IOException, RequestFailedException {
+                    NylasClient nylas = new NylasClient();
+                    NylasApplication application = nylas.application("{CLIENT_ID}", "{CLIENT_SECRET}");
+                    Accounts accounts = application.accounts();
+
+                    // Return an account by specifying its ID
+                    Account account = accounts.get("{accountId}");
+                    
+                    // The following attributes are available for the account object
+                    account.getBillingState();
+                    account.getEmail();
+                    account.getProvider();
+                    account.getSyncState();
+                    account.getTrial();
+                    }
+            }
+      parameters:
+        - schema:
+            type: string
+            default: application/json
+          in: header
+          name: Accept
+        - schema:
+            type: string
+            default: application/json
+          in: header
+          name: Content-Type
+components:
+  schemas:
+    Account-Return-All:
+      title: Account-Return-All
+      type: object
+      description: '`/a/client_id/accounts`'
+      properties:
+        account_id:
+          type: string
+          description: >-
+            A reference to the parent account object (self-referential in this
+            case.
+          example: 622x1k5v1ujh55t6ucel7av4
+        billing_state:
+          type: string
+          description: >-
+            The billing state for the account. Values are `paid`, `cancelled`,
+            or `deleted`.
+          enum:
+            - paid
+            - cancelled
+            - deleted
+            - free
+        email:
+          type: string
+          description: The email address of the account.
+          example: al@particletech.com
+        id:
+          type: string
+          description: A globally unique object identifier.
+          example: 622x1k5v1ujh55t6ucel7av4
+        provider:
+          type: string
+          description: Specifies the provider that backs the account.
+          example: yahoo
+        sync_state:
+          type: string
+          description: The current sync state for the account.
+          example: running
+          enum:
+            - running
+            - invalid
+            - stopped
+        trial:
+          type: boolean
+          description: The trial state for the application.
+    Folder-Object:
+      title: Folder-Object
+      description: ''
+      type: object
+      properties:
+        id:
+          description: Globally unique object identifier.
+          type: string
+          example: blrfzbz4r066ip8x1bh8k8g1y
+        object:
+          description: A string describing the type of object (value is "folder").
+          type: string
+          example: folder
+        account_id:
+          description: Reference to parent account object.
+          type: string
+          example: 79xcak1h10r1tmm5ogavx28lb
+        name:
+          description: >-
+            Standard categories type, based on
+            [RFC-6154](http://tools.ietf.org/html/rfc6154).
+
+            Can be one of the following:
+
+            * inbox
+
+            * all
+
+            * trash
+
+            * archive
+
+            * drafts
+
+            * sent
+
+            * spam
+
+            * important
+
+            * null (regular user-created folder)
+          type: string
+          example: inbox
+        display_name:
+          description: >-
+            Localized name of folder, matching what is presented in their other
+            mail apps. If you are displaying folders, use this instead of
+            `name`.
+          type: string
+          example: Inbox
+      x-tags:
+        - Folders
+      x-examples: {}
+    Folder-Create:
+      title: Folder-Create
+      type: object
+      properties:
+        display_name:
+          description: The human-readable name for the new folder.
+          type: string
+          example: My Renamed Folder
+    Folder-Update:
+      title: Folder-Update
+      type: object
+      properties:
+        display_name:
+          description: The human-readable name for the new folder.
+          type: string
+          example: My Renamed Folder
+        name:
+          description: >-
+            Specify `sent` to update this folder as the primary sent folder.
+            This feature is supported for custom IMAP accounts only.
+          type: string
+          example: renamed-folder
+    Error-400:
+      title: Error-400
+      type: object
+      properties:
+        message:
+          description: Error Message
+          type: string
+          example: Error Message
+        type:
+          description: Error Type
+          type: string
+          example: Error Type
+      x-examples: {}
+    Native-Auth-Post:
+      title: Native-Auth-Post
+      required:
+        - client_id
+        - name
+        - email_address
+        - provider
+      type: object
+      properties:
+        client_id:
+          description: Your client ID from the Nylas Developer console.
+          type: string
+        name:
+          description: The full name of the user (e.g. “John Snow”).
+          type: string
+        email_address:
+          description: The user’s email address.
+          type: string
+        provider:
+          description: >-
+            The format of the settings objec is dependent upon this field. If
+            your provider isn't listed, use the generic settings.
+          enum:
+            - gmail
+            - yahoo
+            - exchange
+            - outlook
+            - imap
+            - icloud
+            - hotmail
+            - aol
+            - office365
+          type: string
+        settings:
+          oneOf:
+            - description: Google Settings
+              properties:
+                google_client_id:
+                  type: string
+                google_client_secret:
+                  type: string
+                google_refresh_token:
+                  type: string
+            - description: Exchange Settings
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                exchange_server_host:
+                  type: string
+            - description: Known IMAP
+              properties:
+                pasword:
+                  type: string
+            - description: Generic IMAP
+              properties:
+                imap_host:
+                  type: string
+                imap_port:
+                  type: string
+                imap_username:
+                  type: string
+                imap_password:
+                  type: string
+                smtp_host:
+                  type: string
+                smtp_port:
+                  type: string
+                smtp_username:
+                  type: string
+                smtp_password:
+                  type: string
+                ssl_required:
+                  type: string
+            - description: Office 365
+              properties:
+                microsoft_client_id:
+                  type: string
+                microsoft_client_secret:
+                  type: string
+                microsoft_refresh_token:
+                  type: string
+                redirect_uri:
+                  description: >-
+                    Redirect URI that the was originally used to get the refresh
+                    token.
+                  type: string
+            - description: Office 365 Service Accounts OAuth
+              properties:
+                microsoft_client_id:
+                  type: string
+                microsoft_client_secret:
+                  type: string
+                microsoft_refresh_token:
+                  type: string
+                redirect_uri:
+                  description: >-
+                    Redirect URI that the was originally used to get the refresh
+                    token.
+                  type: string
+                service_accounts:
+                  default: 'true'
+                  type: string
+            - description: Office 365 Service Account Password Authentication
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                service_account:
+                  default: 'true'
+                  type: string
+            - description: G Suite Service Accounts
+              properties:
+                service_account_json:
+                  type: object
+                  properties:
+                    type:
+                      default: service_account
+                      type: string
+                    project_id:
+                      type: string
+                      example: metal-figure-239116
+                    private_key_id:
+                      type: string
+                      example: 68ac9191dd3468915b4e52e0be785ba7c6873b14
+                    private_key:
+                      type: string
+                      example: >-
+                        -----BEGIN PRIVATE KEY-----\nMI...J7tF8=\n-----END
+                        PRIVATE KEY-----\n
+                    client_email:
+                      type: string
+                      example: >-
+                        test-service-account@metal-figure-239116.iam.gserviceaccount.com
+                    client_id:
+                      type: string
+                      example: '105691998485416876281'
+                    auth_uri:
+                      type: string
+                      example: 'https://accounts.google.com/o/oauth2/auth'
+                    token_uri:
+                      type: string
+                      example: 'https://oauth2.googleapis.com/token'
+                    auth_provider_x509_cert_url:
+                      type: string
+                      example: 'https://www.googleapis.com/oauth2/v1/cert'
+                    client_x509_cert_url:
+                      type: string
+                      example: >-
+                        https://www.googleapis.com/robot/v1/metadata/x509/test-service-account%40metal-figure-239116.iam.gserviceaccount.com
+          type: object
+        scopes:
+          description: >-
+            Any combination of supported authentication scopes. Service accounts
+            only support calendar scopes.
+          type: string
+    Account-Get:
+      title: Account-Get
+      type: object
+      properties:
+        id:
+          description: A globally unique object identifier.
+          type: string
+          example: awa6ltos76vz5hvphkp8k17nt
+        object:
+          description: A string describing the type of object.
+          default: account
+          type: string
+          example: account
+        account_id:
+          description: ID of the account.
+          type: string
+          example: awa6ltos76vz5hvphkp8k17nt
+        name:
+          description: >-
+            The full name of the user, used as the default from name when
+            sending mail.
+          type: string
+          example: Dorothy Vaughan
+        provider:
+          description: >-
+            Specifies the provider that backs the account. See [Supported
+            Providers](#link) for a full list.
+          type: string
+          example: gmail
+        organization_unit:
+          description: >-
+            Specify either label or folder, depending on the provider
+            capabilities. See [Label vs. Folder](#link) for more.
+          type: string
+          example: label
+        sync_state:
+          description: >-
+            The syncing status of the account. See the [Sync Status](#link)
+            documentation for possible values.
+          type: string
+          example: running
+        linked_at:
+          format: int32
+          description: >-
+            A Unix timestamp indicating when this account was originally
+            connected to Nylas.
+          type: integer
+          example: 1470231381
+        email_address:
+          description: >-
+            The canonical email address of the account. For Gmail accounts, this
+            removes periods and plus suffixes.
+          type: string
+          example: dorothy@spacetech.com
+      description: '`/account`'
+    Native-Auth-Token:
+      title: Native-Auth-Token
+      type: object
+      properties:
+        access_token:
+          type: string
+        account_id:
+          type: string
+        billing_state:
+          type: string
+        email_address:
+          type: string
+        id:
+          type: string
+        linked_at:
+          type: integer
+        name:
+          type: string
+        object:
+          type: string
+        organization_unit:
+          type: string
+        provider:
+          type: string
+        sync_state:
+          type: string
+  securitySchemes:
+    BASIC_AUTH:
+      scheme: basic
+      type: http
+    ACCESS_TOKEN:
+      scheme: bearer
+      type: http
+  responses: {}
+  parameters: {}
+tags:
+  - name: Folders
+    description: >-
+      Folders behave like normal IMAP or filesystem folders. A Message can only
+      exist within one folder at a time, but a Thread with many messages may
+      span several folders.
+
+
+      Folders are only supported on accounts for which `organization_unit` is
+      folder. You can check if an account supports labels by looking at the
+      organization_unit property on the Account object.
+
+
+      ## Nested Folders
+
+
+      IMAP has very limited support for nested folders. It encodes a folder's
+      path in its name. For example, the folder Accounting/Taxes will actually
+      be named Accounting.Taxes or even INBOX.Accounting.Taxes depending on your
+      IMAP server. To complicate things, different IMAP servers use different
+      path separators. For example, Taxes.Accounting on server A may be
+      Taxes\Accounting on server B.
+
+
+      The Nylas API handles nested IMAP folders transparently. Creating a
+      Taxes/Invoices folder using the API will create a folder with the right
+      path separators. e.g: Depending on your server: INBOX.Taxes.Invoices or
+      Taxes/Invoices.
+
+
+      ## The Folders Object
+
+
+      | Attribute  | Type | Description  |
+
+      |----:|---|:----|
+
+      | `id` | string | Globally unique object identifier. |
+
+      | `object` | string | A string describing the type of object (value is
+      "folder").
+
+      | `account_id` | string | Reference to parent account object. |
+
+      | `name` | string | Standard categories type, based on
+      [RFC-6154](http://tools.ietf.org/html/rfc6154). <br>Can be one of the
+      following:
+      <ul><li>inbox</li><li>all</li><li>trash</li><li>archive</li><li>drafts</li><li>sent</li><li>spam</li><li>important</li><li>null
+      (regular user-created folder)</li></ul>
+
+      | `display_name`| string | Localized name of folder, matching what is
+      presented in their other mail apps. If you are displaying folders, use
+      this instead of `name`. |
+  - name: Hosted Authentication
+  - name: Native Authentication
+  - name: Accounts
+  - name: Account Management
+    description: >-
+      An account corresponds to an email address, mailbox, and optionally a
+      calendar. When connecting to the Nylas API, a specific access token gives
+      you access to a specific account’s data.
+
+
+      ## The Accounts Object
+
+      | attribute | type  | description  |
+
+      |----:|----|:----|
+
+      | `id` | string | A globally unique object identifier. |
+
+      | `object` | string | A string describing the type of object (value is
+      `"account"`).
+
+      | `account_id` | string | A reference to the parent account object
+      (self-referential in this case). |
+
+      | `name` | string | The full name of the user, used as the default
+      `"from"` name when sending mail. |
+
+      | `email_address` | string | The canonical email address of the account.
+      For Gmail accounts, this removes periods and plus suffixes. |
+
+      | `provider` | string | Specifies the provider that backs the account
+      (e.g. `gmail` or `eas`). See [Supported
+      Providers](ref:supported-providers) for a full list. |
+
+      | `organization_unit` | string | Specify either `"label"` or `"folder"`,
+      depending on the provider capabilities. |
+
+      | `sync_state` | string | The syncing status of the account. See the [Sync
+      status](ref:account-sync-status) documentation for possible values. |
+
+      | `linked_at` | int32 | A Unix timestamp indicating when this account was
+      originally connected to Nylas.
+security: []
