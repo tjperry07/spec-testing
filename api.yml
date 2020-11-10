@@ -8625,6 +8625,21 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  job_status_id:
+                    type: string
+                    minLength: 1
+                required:
+                  - job_status_id
+              examples:
+                DeleteACalenderResponse:
+                  value:
+                    job_status_id: d38mgop88je0agkqrf03sw0sw
         '400':
           description: Bad Request
           content:
@@ -8646,23 +8661,6 @@ paths:
             default: application/json
           in: header
           name: Content-Type
-      requestBody:
-        content:
-          application/json:
-            schema:
-              description: ''
-              type: object
-              properties:
-                job_status_id:
-                  type: string
-                  minLength: 1
-              required:
-                - job_status_id
-            examples:
-              DeleteACalendarResponse:
-                value:
-                  job_status_id: d38mgop88je0agkqrf03sw0sw
-        description: Deletes a calendar.
       x-code-samples:
         - lang: bash
           label: cURL
@@ -16938,5 +16936,3 @@ tags:
       | `linked_at` | int32 | A Unix timestamp indicating when this account was
       originally connected to Nylas.
 security: []
-x-explorer-enabled: false
-x-samples-enabled: true
