@@ -16881,7 +16881,7 @@ tags:
 
       | Attribute  | Type | Description  |
 
-      |----:|---|:----|
+      |----|---|----|
 
       | `id` | string | Globally unique object identifier. |
 
@@ -17406,7 +17406,6 @@ tags:
       |birthday|string|The birthday of contact in the format YYYY-MM-DD.|
 
       |company_name|string|The name of the company, for which the contact
-
       works.|
 
       |job_title|string|The job title of the contact.|
@@ -17414,44 +17413,34 @@ tags:
       |manager_name|string|The name of the manager for the contact.|
 
       |office_location|string|The location of the office for the contact. This
-
       is a free-form field.|
 
       |notes|string|Notes about the contact. This field has limited support.|
 
       |picture_url|string|The URL of endpoint for the contact's picture. See GET
+      `/contacts/picture` for more information.|
 
-      /contacts//picture for more information.|
-
-      |emails|List[Email](#link)|A list of email address objects. See Email for
-
+      |emails|List [Email](#link)|A list of email address objects. See Email for
       more information.|
 
-      |im_addresses|List[IMAddress](# link)|A list of Instant Messaging (IM)
+      |im_addresses|List [IMAddress](# link)|A list of Instant Messaging
+      (IM)Address objects. See IM Address for more information.|
 
-      Address objects. See IM Address  for more information.|
+      |physical_addresses|List [PhysicalAddress](# link)|A list of physical
+      address objects. See Physical Address for more information.|
 
-      |physical_addresses|List[PhysicalAddress](# link)|A list of physical
-
-      address objects. See Physical Address  for more information.|
-
-      |phone_numbers|List[PhoneNumber](# link)|A list of phone number objects.
-
-      See Phone Number for more information.|
+      |phone_numbers|List [PhoneNumber](# link)|A list of phone number
+      objects.See Phone Number for more information.|
 
       |web_pages|List[WebPage](# link)|A list of web page objects. See Web Page
-
       for more information.|
 
       |groups|List[ContactGroup](# link)|A list of Contact Groups, to which the
-
       contact belongs. See Contact Group for more information.|
 
-      |source|string|The source of the contact will be: <ul><li>address_book
-
-      -Denotes a user-created contact</li><li>inbox -Denotes a contact parsed
-
-      from an email</li>  </ul>|
+      |source|string|The source of the contact will be:
+      <ul><li>address_book-Denotes a user-created contact</li><li>inbox -Denotes
+      a contact parsedfrom an email</li> </ul>|
 
 
       ### Email 
@@ -17634,81 +17623,121 @@ tags:
       |description|string|Description of the Calendar|
       |read_only|boolean|True if the Calendar is read only|
   - name: Events
-    description: |-
+    description: >-
       Events are objects within a calendar, generally supporting all features of
+
       modern scheduling apps. Using the calendar APIs, your application can
+
       schedule events, send meeting invitations, RSVP, and more.
+
 
       **Related Documentation**
 
+
       * [Calendar APIs](# link)
+
       * [Virtual Calendars](# link)
+
 
       ## The Events Object
 
+
       |Attribute|Type|Description|
+
       |--- |--- |--- |
+
       |id|string|A globally unique object identifier.|
+
       |object|string|A string describing the type of object (value is "event").|
+
       |account_id|string|A reference to the parent account object.|
+
       |calendar_id|string|A reference to the parent calendar object.|
+
       |title|string|The title of the event, usually short (maximum string length
       of 1024 characters).|
+
       |description|string|The description of the event, which may contain more
       details or an agenda (maximum string length of 8192 characters).|
+
       |ical_uid|string|Unique identifier as defined in RFC5545. It is used to
       uniquely identify events across calendaring systems. Can be null.|
+
       |when|subobject|One of four sub-objects corresponding to the time and
-      duration of an event: time, timespan, date, or datespan. See below for
-      more details.|
+      duration of an event: time, timespan, date, or datespan. |
+
       |location|string|A location, such as a physical address or meeting room
       name.|
+
       |owner|string|The owner of the event, usually specified with their email
       or name and email.|
+
       |participants|array|An array of other participants invited to the event.
-      Keys are email, name, status. Participants may also be rooms or resources.
-      See below for more details.|
+      Keys are email, name, status. Participants may also be rooms or
+      resources.|
+
       |status|string|One of the following values: confirmed, tentative, or
       cancelled.|
+
       |read_only|boolean|Indicates whether the event can be modified.|
+
       |busy|boolean|On shared or public calendars, indicates whether to show
       this event's time block as available. (Also called transparency in some
       systems.)|
-      |recurrence|subobject|Included if the event is a master recurring event.
-      See below for the subobject definition.|
+
+      |recurrence|subobject|Included if the event is a master recurring event.|
+
       |master_event_id|string|Only included in exceptions (overrides) to
       recurring events, the ID of the recurring event.|
+
       |original_start_time|unix timestamp|Only included in exceptions
       (overrides) to recurring events, the start time of the recurring event.|
   - name: Webhooks
-    description: |-
+    description: >-
       Webhooks allow your application to receive notifications when certain
+
       events occur. For example, when a new email is received, Nylas will make a
+
       POST request to your URI endpoint, letting you know information about the
+
       new message. 
 
+
       Webhooks are the recommended way to get notified of changes to the
+
       accounts you sync, because they are easier to integrate with your app and
+
       scale seamlessly with your growth.
+
 
       **Related Documentation**
 
+
       * [Webhooks](# link)
+
       * [Message Tracking](# link)
+
       * [Available Webhooks](# link)
+
 
       ## The Webhooks Object
 
+
       |Attribute|Type|Description|
+
       |--- |--- |--- |
+
       |id|string|A globally unique object identifier.|
+
       |application_id|string|A reference to the parent application object.|
+
       |callback_url|string|The URL where notifications are posted.|
-      |state|string|The state of the webhook. See the table below for possible
-      values.|
+
+      |state|string|The state of the webhook.|
+
       |triggers|array|An array containing a set of triggers, describing the
-      notifications this webhook should receive. See the triggers table for
-      possible values.|
+      notifications this webhook should receive. |
+
       |version|string|A string describing the the webhook version.|
   - name: Deltas
     description: >-
@@ -17722,7 +17751,6 @@ tags:
       **Related Documentation**
 
       * [Deltas](# link)
-
 
 
 
@@ -17750,7 +17778,6 @@ tags:
       |cursor|string|The cursor value for this delta.|
 
       |object|string|The object type of the changed object. (message, thread,
-
       etc.)|
 
       |id|string|The id of the changed object|
@@ -17758,75 +17785,117 @@ tags:
       |event|string|The type of change. Either create, modify, or delete.|
 
       |attributes||The current state of the object. Note this may be different
-
       from the state when the delta change actually happened.|
   - name: Job Statuses
-    description: |-
+    description: >-
       Job Statuses allow you to track whether a modification through the Nylas
+
       API has synced back to the account's provider.
 
+
       For example, if you make an API request to create a new Calendar for a
+
       Google account using POST /calendars, Nylas will immediately return the
+
       new Calendar ID before it is synced with Google. You can use the job
+
       status to check whether the `create_calendar` action has synced to Google.
+
 
       ## The Job Status Object
 
+
       |Attribute|Type|Description|
+
       |--- |--- |--- |
+
       |account_id|string|Reference to parent account object|
+
       |action|string|Action performed on a given object|
+
       |created_at|unix timestamp|Timestamp indicating when the job status was
       created.|
+
       |job_status_id|string|Globally unique id representing the job|
+
       |id|string|A globally unique object identifier.|
+
       |object|string|A string describing the type of object this job status
       refers to.|
+
       |status|string|A string indicating the job status. Can be successful,
       pending, or failed|
   - name: Drafts
-    description: |-
+    description: >-
       A draft is a special kind of message which has not been sent, and
+
       therefore its body contents and recipients are still mutable. The drafts
+
       endpoints let you read and modify existing drafts, create new drafts, send
+
       drafts, and delete drafts.
+
 
       ## The Draft Object
 
 
+
       |Attribute|Type|Description|
+
       |--- |--- |--- |
+
       |id|string|A globally unique object identifier.|
+
       |object|string|A string describing the type of object (value is "draft").|
+
       |account_id|string|A reference to the parent account object,|
+
       |thread_id|string|A reference to the parent thread object. If this is a
       new draft, the thread will be empty.|
+
       |subject|string|The subject line of the draft.|
+
       |reply_to_message_id|string|The ID of a message to which this draft is a
       reply, allowing the sending API to include threading-specific headers for
       other mail clients.|
+
       |from|array|Array containing a single name+email pair to set as the "from"
       header. (See Aliases.)|
+
       |reply_to|array|An array of name-email pairs to set an alternative
       Reply-To header in the final sent message.|
+
       |to|array|An array of name-email pairs of recipients.|
+
       |cc|array|An array of name-email pairs of recipients to be cc'd.|
+
       |bcc|array|An array of name-email pairs of recipients to be bcc'd.|
+
       |date|unix timestamp|The timestamp of the last modification of the draft.|
+
       |unread|boolean|Indicates an unread state for the draft.|
+
       |starred|boolean|Starred or flagged state (mutable).|
+
       |snippet|string|A shortened plain-text preview of the draft body.|
+
       |body|string|The full HTML draft body text.|
+
       |files|array|An array of file objects, if the draft includes attachments.|
+
       |events|array|An array of event objects, if the draft includes calendar
+
       invites.|
+
       |folder|folder object|A single folder object indicating the location of
       the draft, present only if the parent account's organization_unit is
       folder. Customarily this is a folder where name is drafts, but not
       always.|
+
       |labels|array|A list of label objects, present only if the parent
       account's organization_unit is "label". These have Gmail-style semantics
       and can be arbitrarily added and removed from messages.|
+
       |version|integer|Incrementing value related to draft updates.You can use
       this to compare revisions or to invalidate your local cache.|
 security: []
