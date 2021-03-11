@@ -2,7 +2,19 @@ openapi: 3.0.0
 info:
   title: Nylas API Template
   version: '2.1'
-  description: This demonstrates how to document Nylas REST APIs.
+  description: |
+    I am part of the description. I contain text. Written in markdown.
+
+    # Headings 1
+
+    Some text
+
+    ## Heading 2
+
+    Some Text
+
+    ### Heading 3
+    More text 
   contact:
     url: 'http://support.nylas.com/'
   license:
