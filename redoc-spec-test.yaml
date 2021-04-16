@@ -13,6 +13,9 @@ info:
 
     Some Text
     <div class="callout-error"> I am a error </div>
+    <div class="callout-warn"> I am a error </div>
+     <div class="callout-info"> I am a error </div>
+     <div class="callout-success"> I am a error </div>
 
     ### Heading 3
     More text 
