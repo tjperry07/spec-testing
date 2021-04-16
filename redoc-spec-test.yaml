@@ -12,6 +12,7 @@ info:
     ## Heading 2
 
     Some Text
+    <div class="callout-error"> I am a error </div>
 
     ### Heading 3
     More text 
