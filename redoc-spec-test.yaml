@@ -2293,11 +2293,11 @@ paths:
                     }
             }
       security:
-        - ACCESS_TOKEN: []
+        - BASIC_AUTH: []
       parameters:
         - schema:
             type: string
-            default: appliacation/json
+            default: application/json
           in: header
           name: Accept
           required: true
